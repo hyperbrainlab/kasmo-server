@@ -1,31 +1,70 @@
 import {
   Body,
   Controller,
-  Get,
   HttpCode,
   HttpStatus,
   Post,
-  Request,
   UseGuards,
+  Request,
+  InternalServerErrorException,
+  ValidationPipe,
+  UsePipes,
 } from '@nestjs/common';
-import { AuthGuard } from './auth.guard';
-import { AuthService } from './auth.service';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { SignInDto } from './dto/signin.dto';
+import { AuthGuard } from '../auth/auth.guard';
+
+import { AuthService } from './auth.service';
+import { UserService } from '../user/user.service';
+
+import { SigninDto } from './dto/signin.dto';
+import { SignupDto } from './dto/signup.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private userService: UserService,
+  ) {}
 
-  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: '로그인' })
+  @ApiTags('auth')
   @Post('login')
-  signIn(@Body() signInDto: SignInDto) {
-    return this.authService.signIn(signInDto.user_id, signInDto.password);
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async login(@Body() signinDto: SigninDto) {
+    try {
+      await this.authService.login(signinDto);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
+  @ApiOperation({ summary: '회원가입' })
+  @ApiTags('auth')
+  @Post('signup')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async signup(@Body() signupDto: SignupDto) {
+    try {
+      await this.authService.signup(signupDto);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @ApiOperation({ summary: '회원탈퇴' })
+  @ApiTags('auth')
+  @Post('withdraw')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  async withdraw(@Request() req) {
+    try {
+      const id = req.user.id;
+
+      return this.userService.remove(Number(id));
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 }
