@@ -17,8 +17,9 @@ import { AuthGuard } from '../auth/auth.guard';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 
-import { SigninDto } from './dto/signin.dto';
+import { LoginRequestDto } from './dto/login.request.dto';
 import { SignupDto } from './dto/signup.dto';
+import { LoginResponseDto } from './dto/login.response.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -32,9 +33,11 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async login(@Body() signinDto: SigninDto) {
+  async login(
+    @Body() loginRequestDto: LoginRequestDto,
+  ): Promise<LoginResponseDto> {
     try {
-      await this.authService.login(signinDto);
+      return await this.authService.login(loginRequestDto);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

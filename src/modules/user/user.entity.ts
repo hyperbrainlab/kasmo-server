@@ -9,14 +9,14 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity('user')
 export class UserEntity extends BaseEntity {
   @ApiProperty({ description: 'User Primary Key' })
   @PrimaryGeneratedColumn()
   id!: number;
 
   @ApiProperty({ description: 'firebase UID' })
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid', unique: true })
   uid: string;
 
   @ApiProperty({ description: '이메일 주소' })
@@ -49,27 +49,15 @@ export class UserEntity extends BaseEntity {
   @Column({ default: false })
   is_biz: boolean;
 
-  @ApiProperty({ description: '등록일자' })
-  @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    nullable: true,
-  })
-  joined_at: Date;
-
   @ApiProperty({ description: '생성일자' })
   @CreateDateColumn({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    nullable: true,
   })
   created_at: Date;
 
   @ApiProperty({ description: '최근 업데이트 일자' })
   @UpdateDateColumn({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    nullable: true,
   })
   updated_at: Date;
 }
