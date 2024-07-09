@@ -10,7 +10,7 @@ import {
   ValidationPipe,
   UsePipes,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 
 import { AuthGuard } from '../auth/auth.guard';
 
@@ -30,6 +30,7 @@ export class AuthController {
 
   @ApiOperation({ summary: '로그인' })
   @ApiTags('auth')
+  @ApiResponse({ status: 200, type: LoginResponseDto })
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -45,6 +46,7 @@ export class AuthController {
 
   @ApiOperation({ summary: '회원가입' })
   @ApiTags('auth')
+  @ApiResponse({ status: 200, type: LoginResponseDto })
   @Post('signup')
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
