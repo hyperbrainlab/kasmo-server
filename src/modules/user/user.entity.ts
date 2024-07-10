@@ -23,6 +23,14 @@ export class UserEntity extends BaseEntity {
   @Column()
   email: string;
 
+  @ApiProperty({
+    description: '비즈니스(스토어) 이름',
+    required: false,
+    nullable: true,
+  })
+  @Column({ nullable: true })
+  biz_name: string;
+
   @ApiProperty({ description: '이름' })
   @Column()
   name: string;
