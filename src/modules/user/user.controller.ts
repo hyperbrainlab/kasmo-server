@@ -34,11 +34,11 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  profile(@Request() req): Promise<UserProfileDto> {
+  async profile(@Request() req): Promise<UserProfileDto> {
     try {
       const id = req.user.id;
 
-      return this.userService.findOne(Number(id));
+      return await this.userService.findOne(Number(id));
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

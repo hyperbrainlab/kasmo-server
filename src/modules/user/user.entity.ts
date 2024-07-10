@@ -13,7 +13,7 @@ import {
 export class UserEntity extends BaseEntity {
   @ApiProperty({ description: 'User Primary Key' })
   @PrimaryGeneratedColumn()
-  id!: number;
+  id: number;
 
   @ApiProperty({ description: 'firebase UID' })
   @Column({ type: 'uuid', unique: true })
@@ -48,7 +48,7 @@ export class UserEntity extends BaseEntity {
   phone_no: string;
 
   @ApiProperty({
-    enum: ['email', 'google', 'apple', 'kakao'],
+    enum: ['EMAIL', 'GOOGLE', 'APPLE', 'KAKAO'],
   })
   @Column()
   provider: string;
