@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { UserEntity } from 'src/modules/user/user.entity';
 
 import { CreateUserDto } from './dto/create.user.dto';
@@ -16,27 +16,46 @@ export class UserService {
   async findOne(id: number): Promise<UserEntity | undefined> {
     const user = await this.userRepository.findOneBy({ id });
 
+    if (!user) {
+      throw new HttpException('User not found.', HttpStatus.BAD_REQUEST);
+    }
+
     return user;
   }
 
   async findOneByUid(uid: string): Promise<UserEntity | undefined> {
     const user = await this.userRepository.findOneBy({ uid });
 
+    if (!user) {
+      throw new HttpException('User not found.', HttpStatus.BAD_REQUEST);
+    }
+
     return user;
   }
 
-  async update(updateUserDto: UpdateUserDto) {
-    return await this.userRepository.update(
-      { id: updateUserDto.id },
-      updateUserDto,
-    );
+  async update(userId: number, updateUserDto: UpdateUserDto) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!user) {
+      throw new HttpException('User not found.', HttpStatus.BAD_REQUEST);
+    }
+
+    await this.userRepository.update({ id: userId }, updateUserDto);
+
+    return await this.userRepository.findOneBy({ id: userId });
   }
 
   async create(createUserDto: CreateUserDto) {
     return await this.userRepository.save(createUserDto);
   }
 
-  async remove(id: number) {
-    return await this.userRepository.delete(id);
+  async remove(userId: number) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!user) {
+      throw new HttpException('User not found.', HttpStatus.BAD_REQUEST);
+    }
+
+    return await this.userRepository.delete(userId);
   }
 }
