@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserEntity } from 'src/modules/user/user.entity';
 
 import { CreateUserDto } from './dto/create.user.dto';
@@ -13,12 +13,8 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async findOne(id: number): Promise<UserEntity | undefined> {
+  async findOneById(id: number): Promise<UserEntity | undefined> {
     const user = await this.userRepository.findOneBy({ id });
-
-    if (!user) {
-      throw new HttpException('User not found.', HttpStatus.BAD_REQUEST);
-    }
 
     return user;
   }
@@ -26,20 +22,10 @@ export class UserService {
   async findOneByUid(uid: string): Promise<UserEntity | undefined> {
     const user = await this.userRepository.findOneBy({ uid });
 
-    if (!user) {
-      throw new HttpException('User not found.', HttpStatus.BAD_REQUEST);
-    }
-
     return user;
   }
 
   async update(userId: number, updateUserDto: UpdateUserDto) {
-    const user = await this.userRepository.findOneBy({ id: userId });
-
-    if (!user) {
-      throw new HttpException('User not found.', HttpStatus.BAD_REQUEST);
-    }
-
     await this.userRepository.update({ id: userId }, updateUserDto);
 
     return await this.userRepository.findOneBy({ id: userId });
@@ -50,12 +36,6 @@ export class UserService {
   }
 
   async remove(userId: number) {
-    const user = await this.userRepository.findOneBy({ id: userId });
-
-    if (!user) {
-      throw new HttpException('User not found.', HttpStatus.BAD_REQUEST);
-    }
-
     return await this.userRepository.delete(userId);
   }
 }

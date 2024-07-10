@@ -12,6 +12,7 @@ import {
   InternalServerErrorException,
   ValidationPipe,
   UsePipes,
+  NotFoundException,
 } from '@nestjs/common';
 
 import {
@@ -42,7 +43,13 @@ export class UserController {
     try {
       const userId = req.user.id;
 
-      return await this.userService.findOne(Number(userId));
+      const user = await this.userService.findOneById(userId);
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      return user;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -76,7 +83,13 @@ export class UserController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async profile(@Param('id') userId: number): Promise<UserProfileDto> {
     try {
-      return await this.userService.findOne(userId);
+      const user = await this.userService.findOneById(userId);
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      return user;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

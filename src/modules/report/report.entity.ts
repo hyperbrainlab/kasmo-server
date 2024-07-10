@@ -20,21 +20,13 @@ export class ReportEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({ description: '산고 하는 사람 아이디' })
+  @ApiProperty({ description: '신고 하는 사람 아이디' })
   @Column()
   reporter_id: number;
 
-  @ApiProperty({ description: '산고 받는 사람 아이디' })
+  @ApiProperty({ description: '신고 받는 사람 아이디' })
   @Column()
-  reportee_id: number;
-
-  @ManyToOne(() => UserEntity, (user) => user.reports_by_reporter)
-  @JoinColumn({ name: 'reporter_id', referencedColumnName: 'id' })
-  reporter: UserEntity;
-
-  @ManyToOne(() => UserEntity, (user) => user.reports_by_reportee)
-  @JoinColumn({ name: 'reportee_id', referencedColumnName: 'id' })
-  reportee: UserEntity;
+  reported_id: number;
 
   @ApiProperty({
     enum: ReportType,
@@ -59,4 +51,12 @@ export class ReportEntity extends BaseEntity {
     type: 'timestamp',
   })
   updated_at: Date;
+
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'reporter_id' })
+  reporter: UserEntity;
+
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'reported_id' })
+  reported: UserEntity;
 }

@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { ReportModule } from './modules/report/report.module';
+import { UserBlockModule } from './modules/user_block/user_block.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ReportModule } from './modules/report/report.module';
     AuthModule,
     UserModule,
     ReportModule,
+    UserBlockModule,
   ],
   controllers: [AppController],
   providers: [AppService],

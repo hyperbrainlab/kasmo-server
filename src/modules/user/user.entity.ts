@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 
 import { ReportEntity } from '../report/report.entity';
+import { UserBlockEntity } from '../user_block/user_block.entity';
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
@@ -72,9 +73,15 @@ export class UserEntity extends BaseEntity {
   })
   updated_at: Date;
 
-  @OneToMany(() => ReportEntity, (report) => report.reporter)
-  reports_by_reporter: ReportEntity[];
+  // @OneToMany(() => ReportEntity, (report) => report.reporter)
+  // reports_by_reporter: ReportEntity[];
 
-  @OneToMany(() => ReportEntity, (report) => report.reportee)
-  reports_by_reportee: ReportEntity[];
+  // @OneToMany(() => ReportEntity, (report) => report.reported)
+  // reports_by_reported: ReportEntity[];
+
+  // @OneToMany(() => UserBlockEntity, (userBlock) => userBlock.blocker)
+  // blocks_by_blocker: ReportEntity[];
+
+  // @OneToMany(() => UserBlockEntity, (userBlock) => userBlock.blocked)
+  // blocks_by_blocked: ReportEntity[];
 }
