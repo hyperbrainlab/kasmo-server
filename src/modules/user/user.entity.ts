@@ -7,7 +7,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+
+import { ReportEntity } from '../report/report.entity';
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
@@ -68,4 +71,10 @@ export class UserEntity extends BaseEntity {
     type: 'timestamp',
   })
   updated_at: Date;
+
+  @OneToMany(() => ReportEntity, (report) => report.reporter)
+  reports_by_reporter: ReportEntity[];
+
+  @OneToMany(() => ReportEntity, (report) => report.reportee)
+  reports_by_reportee: ReportEntity[];
 }

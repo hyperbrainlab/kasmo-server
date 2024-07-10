@@ -1,5 +1,5 @@
 import { ReportEntity } from './report.entity';
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -23,17 +23,6 @@ export class ReportService {
     reporteeId: number;
     report_type: string;
   }) {
-    const reporter = await this.userService.findOne(reporterId);
-    const reportee = await this.userService.findOne(reporteeId);
-
-    if (!reporter) {
-      throw new HttpException('Reporter not found.', HttpStatus.BAD_REQUEST);
-    }
-
-    if (!reportee) {
-      throw new HttpException('Reportee not found.', HttpStatus.BAD_REQUEST);
-    }
-
     return await this.reportRepository.save({
       reporter_id: reporterId,
       reportee_id: reporteeId,
