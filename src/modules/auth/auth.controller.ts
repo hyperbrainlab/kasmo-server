@@ -52,7 +52,7 @@ export class AuthController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async signup(@Body() signupDto: SignupDto) {
     try {
-      await this.authService.signup(signupDto);
+      return await this.authService.signup(signupDto);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
