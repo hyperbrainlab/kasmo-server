@@ -21,7 +21,7 @@ import {
 } from '@nestjs/swagger';
 
 import { AuthGuard } from '../auth/auth.guard';
-import { ReportRequestDto } from './dto/report.request.dto';
+import { ReportRequest } from './dto/request.report.dto';
 
 @Controller('report')
 export class ReportController {
@@ -38,7 +38,7 @@ export class ReportController {
   async report(
     @Request() req,
     @Param('reported_id') reported_id: number,
-    @Body() reportRequestDto: ReportRequestDto,
+    @Body() reportRequestDto: ReportRequest,
   ) {
     try {
       const reporter_id = req.user.id;

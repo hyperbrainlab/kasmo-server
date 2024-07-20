@@ -1,3 +1,3 @@
 import { UserEntity } from '../user.entity';
 
-export class UserProfileDto extends UserEntity {}
+export class UserProfileResponse extends UserEntity {}

@@ -17,9 +17,9 @@ import { AuthGuard } from '../auth/auth.guard';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 
-import { LoginRequestDto } from './dto/login.request.dto';
-import { SignupDto } from './dto/signup.dto';
-import { LoginResponseDto } from './dto/login.response.dto';
+import { LoginRequest } from './dto/login.request.dto';
+import { SignupRequest } from './dto/signup.dto';
+import { LoginResponse } from './dto/login.response.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -30,15 +30,13 @@ export class AuthController {
 
   @ApiOperation({ summary: '로그인' })
   @ApiTags('auth')
-  @ApiResponse({ status: 200, type: LoginResponseDto })
+  @ApiResponse({ status: 200, type: LoginResponse })
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async login(
-    @Body() loginRequestDto: LoginRequestDto,
-  ): Promise<LoginResponseDto> {
+  async login(@Body() loginRequest: LoginRequest): Promise<LoginRequest> {
     try {
-      return await this.authService.login(loginRequestDto);
+      return await this.authService.login(loginRequest);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -46,11 +44,11 @@ export class AuthController {
 
   @ApiOperation({ summary: '회원가입' })
   @ApiTags('auth')
-  @ApiResponse({ status: 200, type: LoginResponseDto })
+  @ApiResponse({ status: 200, type: LoginResponse })
   @Post('signup')
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async signup(@Body() signupDto: SignupDto) {
+  async signup(@Body() signupDto: SignupRequest) {
     try {
       return await this.authService.signup(signupDto);
     } catch (error) {
@@ -67,7 +65,7 @@ export class AuthController {
     try {
       const id = req.user.id;
 
-      return this.userService.remove(Number(id));
+      return this.userService.delete(Number(id));
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

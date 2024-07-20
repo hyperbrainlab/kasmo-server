@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsEmpty } from 'class-validator';
 
-export class UpdateUserDto {
+export class UpdateUserRequest {
   @ApiProperty({ description: '이메일 주소', required: false, nullable: true })
   @IsString()
   @IsEmpty()

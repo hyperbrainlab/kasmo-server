@@ -7,7 +7,7 @@ import { UserEntity } from 'src/modules/user/user.entity';
 
 import { Provider } from '../constants';
 
-export class SignupDto extends PickType(UserEntity, [
+export class SignupRequest extends PickType(UserEntity, [
   'uid',
   'name',
   'email',

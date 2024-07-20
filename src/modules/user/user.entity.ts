@@ -9,9 +9,10 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-
-import { ReportEntity } from '../report/report.entity';
+import { PostEntity } from '../post/post.entity';
+import { CommentEntity } from '../comment/comment.entity';
 import { UserBlockEntity } from '../user_block/user_block.entity';
+import { ReportEntity } from '../report/report.entity';
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
@@ -73,15 +74,27 @@ export class UserEntity extends BaseEntity {
   })
   updated_at: Date;
 
-  // @OneToMany(() => ReportEntity, (report) => report.reporter)
-  // reports_by_reporter: ReportEntity[];
+  @ApiProperty({ description: '유저가 작성한 게시글' })
+  @OneToMany(() => PostEntity, (post) => post.user)
+  posts: PostEntity[];
 
-  // @OneToMany(() => ReportEntity, (report) => report.reported)
-  // reports_by_reported: ReportEntity[];
+  @ApiProperty({ description: '유저가 작성한 댓글' })
+  @OneToMany(() => CommentEntity, (comment) => comment.user)
+  comments: CommentEntity[];
 
-  // @OneToMany(() => UserBlockEntity, (userBlock) => userBlock.blocker)
-  // blocks_by_blocker: ReportEntity[];
+  @ApiProperty({ description: '유저가 행한 블록' })
+  @OneToMany(() => UserBlockEntity, (userBlock) => userBlock.blocker)
+  blocks_made: UserBlockEntity[];
 
-  // @OneToMany(() => UserBlockEntity, (userBlock) => userBlock.blocked)
-  // blocks_by_blocked: ReportEntity[];
+  @ApiProperty({ description: '유저가 당한 블록' })
+  @OneToMany(() => UserBlockEntity, (userBlock) => userBlock.blocked)
+  blocks_received: UserBlockEntity[];
+
+  @ApiProperty({ description: '유저가 행한 신고' })
+  @OneToMany(() => ReportEntity, (report) => report.reporter)
+  reports_made: ReportEntity[];
+
+  @ApiProperty({ description: '유저가 당한 신고' })
+  @OneToMany(() => ReportEntity, (report) => report.reported)
+  reports_received: ReportEntity[];
 }

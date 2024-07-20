@@ -1,9 +1,9 @@
-import { LoginRequestDto } from './dto/login.request.dto';
-import { LoginResponseDto } from './dto/login.response.dto';
+import { LoginRequest } from './dto/login.request.dto';
+import { LoginResponse } from './dto/login.response.dto';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { SignupDto } from './dto/signup.dto';
+import { SignupRequest } from './dto/signup.dto';
 
 @Injectable()
 export class AuthService {
@@ -12,7 +12,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(loginRequestDto: LoginRequestDto): Promise<LoginResponseDto> {
+  async login(loginRequestDto: LoginRequest): Promise<LoginResponse> {
     const user = await this.userService.findOneByUid(loginRequestDto.uid);
 
     if (!user) {
@@ -28,9 +28,9 @@ export class AuthService {
     };
   }
 
-  async signup(signupDto: SignupDto) {
-    await this.userService.create(signupDto);
+  async signup(signupRequest: SignupRequest) {
+    await this.userService.create(signupRequest);
 
-    return await this.login({ uid: signupDto.uid });
+    return await this.login({ uid: signupRequest.uid });
   }
 }

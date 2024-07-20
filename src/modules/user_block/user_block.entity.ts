@@ -21,19 +21,21 @@ export class UserBlockEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({ description: '유저 블락을 하는 사람 아이디' })
-  @Column()
-  blocker_id: number;
-
-  @ApiProperty({ description: '유저 블락을 받는 사람 아이디' })
-  @Column()
-  blocked_id: number;
-
   @ApiProperty({
     enum: Status,
   })
   @Column()
   status: string;
+
+  @ApiProperty({ description: '블록을 한 사람' })
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'blocker_id' })
+  blocker: UserEntity;
+
+  @ApiProperty({ description: '블록을 당한 사람' })
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'blocked_id' })
+  blocked: UserEntity;
 
   @ApiProperty({ description: '생성일자' })
   @CreateDateColumn({
@@ -46,12 +48,4 @@ export class UserBlockEntity extends BaseEntity {
     type: 'timestamp',
   })
   updated_at: Date;
-
-  @ManyToOne(() => UserEntity)
-  @JoinColumn({ name: 'blocker_id' })
-  blocker: UserEntity;
-
-  @ManyToOne(() => UserEntity)
-  @JoinColumn({ name: 'blocked_id' })
-  blocked: UserEntity;
 }

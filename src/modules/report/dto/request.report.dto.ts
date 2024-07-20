@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum } from 'class-validator';
 import { ReportType } from '../constants';
 
-export class ReportRequestDto {
+export class ReportRequest {
   @ApiProperty({
     enum: ReportType,
   })
