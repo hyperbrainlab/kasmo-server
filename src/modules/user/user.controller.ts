@@ -41,9 +41,9 @@ export class UserController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async me(@Request() req): Promise<UserProfileResponse> {
     try {
-      const id = req.user.id;
+      const userId = req.user.id;
 
-      const user = await this.userService.findOneById(id);
+      const user = await this.userService.findOneById(userId);
 
       if (!user) {
         throw new NotFoundException('User not found');
@@ -65,9 +65,9 @@ export class UserController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async update(@Request() req, @Body() userProfileDto: UpdateUserRequest) {
     try {
-      const id = req.user.id;
+      const userId = req.user.id;
 
-      return await this.userService.update(Number(id), userProfileDto);
+      return await this.userService.update(Number(userId), userProfileDto);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

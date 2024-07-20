@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { UserService } from '../user/user.service';
+import { ReportType, Status } from './constants';
 
 @Injectable()
 export class ReportService {
@@ -21,7 +22,7 @@ export class ReportService {
   }: {
     reporter_id: number;
     reported_id: number;
-    report_type: string;
+    report_type: ReportType;
   }) {
     const reporter = await this.userService.findOneById(reporter_id);
     const reported = await this.userService.findOneById(reported_id);
@@ -35,10 +36,10 @@ export class ReportService {
     }
 
     return await this.reportRepository.save({
-      reporter_id,
-      reported_id,
+      reporter,
+      reported,
       report_type,
-      status: 'APPROVED', // 신고 처리 절차를 생략하고 바로 승인 상태로 처리
+      status: Status.APPROVED, // 신고 처리 절차를 생략하고 바로 승인 상태로 처리
     });
   }
 }

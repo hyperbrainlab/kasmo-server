@@ -34,7 +34,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async login(@Body() loginRequest: LoginRequest): Promise<LoginRequest> {
+  async login(@Body() loginRequest: LoginRequest): Promise<LoginResponse> {
     try {
       return await this.authService.login(loginRequest);
     } catch (error) {

@@ -14,8 +14,8 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async findOneById(id: number): Promise<UserEntity | undefined> {
-    const user = await this.userRepository.findOneBy({ id });
+  async findOneById(userId: number): Promise<UserEntity | undefined> {
+    const user = await this.userRepository.findOneBy({ id: userId });
 
     return user;
   }

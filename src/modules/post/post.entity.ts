@@ -1,33 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import {
-  BaseEntity,
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  JoinColumn,
-  ManyToOne,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-} from 'typeorm';
+import { Entity, Column, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 import { Categories } from './constants';
 
 import { CommentEntity } from '../comment/comment.entity';
 import { UserEntity } from '../user/user.entity';
+import { AbstractEntity } from '../common/entity/abstract.entity';
 
 @Entity('post')
-export class PostEntity extends BaseEntity {
-  @ApiProperty({ description: 'Post Primary Key' })
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class PostEntity extends AbstractEntity {
   @ApiProperty({ description: '카테고리' })
   @Column({
+    type: 'enum',
     enum: Categories,
   })
-  category: string;
+  category: Categories;
 
   @ApiProperty({ description: '제목' })
   @Column()
@@ -40,18 +28,6 @@ export class PostEntity extends BaseEntity {
   @ApiProperty({ description: '조회수' })
   @Column()
   view_count: number;
-
-  @ApiProperty({ description: '생성일자' })
-  @CreateDateColumn({
-    type: 'timestamp',
-  })
-  created_at: Date;
-
-  @ApiProperty({ description: '최근 업데이트 일자' })
-  @UpdateDateColumn({
-    type: 'timestamp',
-  })
-  updated_at: Date;
 
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id' })

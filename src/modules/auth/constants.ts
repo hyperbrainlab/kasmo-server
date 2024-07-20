@@ -3,8 +3,8 @@ export const jwtConstants = {
 };
 
 export enum Provider {
-  EMAIL = 'EMAIL',
-  GOOGLE = 'GOOGLE',
-  APPLE = 'APPLE',
-  KAKAO = 'KAKAO',
+  EMAIL = 'email',
+  GOOGLE = 'google',
+  APPLE = 'apple',
+  KAKAO = 'kakao',
 }

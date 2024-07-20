@@ -1,26 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import {
-  BaseEntity,
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-  CreateDateColumn,
-  UpdateDateColumn,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 
 import { PostEntity } from '../post/post.entity';
 import { UserEntity } from '../user/user.entity';
+import { AbstractEntity } from '../common/entity/abstract.entity';
 
 @Entity('comment')
-export class CommentEntity extends BaseEntity {
-  @ApiProperty({ description: 'Comment Primary Key' })
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class CommentEntity extends AbstractEntity {
   @ApiProperty({ description: '본문' })
   @Column()
   body: string;
@@ -43,16 +30,4 @@ export class CommentEntity extends BaseEntity {
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
-
-  @ApiProperty({ description: '생성일자' })
-  @CreateDateColumn({
-    type: 'timestamp',
-  })
-  created_at: Date;
-
-  @ApiProperty({ description: '최근 업데이트 일자' })
-  @UpdateDateColumn({
-    type: 'timestamp',
-  })
-  updated_at: Date;
 }

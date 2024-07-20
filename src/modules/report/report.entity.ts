@@ -1,30 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import {
-  BaseEntity,
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { ReportType, Status } from './constants';
 
 import { UserEntity } from '../user/user.entity';
+import { AbstractEntity } from '../common/entity/abstract.entity';
 
 @Entity('report')
-export class ReportEntity extends BaseEntity {
-  @ApiProperty({ description: 'Report Primary Key' })
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class ReportEntity extends AbstractEntity {
   @ApiProperty({
     enum: ReportType,
   })
-  @Column()
-  report_type: string;
+  @Column({
+    type: 'enum',
+    enum: ReportType,
+  })
+  report_type: ReportType;
 
   @ApiProperty({ description: '신고를 한 사람' })
   @ManyToOne(() => UserEntity)
@@ -39,18 +30,9 @@ export class ReportEntity extends BaseEntity {
   @ApiProperty({
     enum: Status,
   })
-  @Column()
-  status: string;
-
-  @ApiProperty({ description: '생성일자' })
-  @CreateDateColumn({
-    type: 'timestamp',
+  @Column({
+    type: 'enum',
+    enum: Status,
   })
-  created_at: Date;
-
-  @ApiProperty({ description: '최근 업데이트 일자' })
-  @UpdateDateColumn({
-    type: 'timestamp',
-  })
-  updated_at: Date;
+  status: Status;
 }

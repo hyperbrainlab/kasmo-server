@@ -1,11 +1,11 @@
-import { IsNumber, IsString, IsEmpty } from 'class-validator';
+import { IsNumber, IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateCommentDto {
+export class CreateCommentRequest {
   @ApiProperty({ description: '댓글 본문', required: true, nullable: false })
   @IsString()
-  @IsEmpty()
+  @IsNotEmpty()
   body: string;
 
   @ApiProperty({
@@ -14,7 +14,7 @@ export class CreateCommentDto {
     nullable: true,
   })
   @IsNumber()
-  @IsEmpty()
+  @IsOptional()
   parent_comment_id?: number;
 
   @ApiProperty({
@@ -23,6 +23,6 @@ export class CreateCommentDto {
     nullable: false,
   })
   @IsNumber()
-  @IsEmpty()
+  @IsNotEmpty()
   post_id: number;
 }

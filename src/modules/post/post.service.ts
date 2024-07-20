@@ -2,25 +2,71 @@ import { PostEntity } from './post.entity';
 import { Injectable } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 
-import { UserService } from '../user/user.service';
-import { CommentService } from '../comment/comment.service';
+import { CreatePostRequest } from './dto/create.post.dto';
+import { UpdatePostRequest } from './dto/update.post.dto';
+import { PaginationResponse } from '../common/dto/pagination.response.dto';
+import { PostsRequest } from './dto/retrieve.post.dto';
 
 @Injectable()
 export class PostService {
   constructor(
-    private commentService: CommentService,
-    private userService: UserService,
     @InjectRepository(PostEntity)
     private readonly postRepository: Repository<PostEntity>,
   ) {}
 
-  async findAll() {}
+  async paginate({
+    category,
+    keyword,
+    order,
+    page = 1,
+    size = 10,
+  }: PostsRequest): Promise<PaginationResponse<PostEntity[]>> {
+    const offset = (page - 1) * size;
+    const [posts, total] = await this.postRepository.findAndCount({
+      where: {
+        category,
+        title: Like(`%${keyword}%`),
+        user: {
+          name: Like(`%${keyword}%`),
+        },
+      },
+      order:
+        order === 'popular' ? { view_count: 'DESC' } : { created_at: 'DESC' },
+      skip: offset,
+      take: size,
+    });
 
-  async create() {}
+    return {
+      data: posts,
+      page: 1,
+      total,
+      size,
+    };
+  }
 
-  async update() {}
+  async findOneById(postId: number): Promise<PostEntity | undefined> {
+    const post = await this.postRepository.findOneBy({ id: postId });
 
-  async delete() {}
+    return post;
+  }
+
+  async addViewCount(postId: number) {
+    await this.postRepository.increment({ id: postId }, 'view_count', 1);
+  }
+
+  async create(createPostRequest: CreatePostRequest) {
+    return await this.postRepository.save(createPostRequest);
+  }
+
+  async update(commentId: number, updatePostRequest: UpdatePostRequest) {
+    await this.postRepository.update({ id: commentId }, updatePostRequest);
+
+    return await this.postRepository.findOneBy({ id: commentId });
+  }
+
+  async delete(postId: number) {
+    return await this.postRepository.delete(postId);
+  }
 }

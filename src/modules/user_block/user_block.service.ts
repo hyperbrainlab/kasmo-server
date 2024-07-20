@@ -4,6 +4,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserService } from '../user/user.service';
+import { Status } from './constants';
 
 @Injectable()
 export class UserBlockService {
@@ -32,9 +33,9 @@ export class UserBlockService {
     }
 
     return await this.userBlockRepository.save({
-      blocker_id,
-      blocked_id,
-      status: 'APPROVED', // 신고 처리 절차를 생략하고 바로 승인 상태로 처리
+      blocker,
+      blocked,
+      status: Status.APPROVED, // 신고 처리 절차를 생략하고 바로 승인 상태로 처리
     });
   }
 }
