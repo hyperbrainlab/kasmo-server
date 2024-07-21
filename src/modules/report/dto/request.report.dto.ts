@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum } from 'class-validator';
+import { Expose } from 'class-transformer';
+
 import { ReportType } from '../constants';
 
 export class ReportRequest {
@@ -12,5 +14,6 @@ export class ReportRequest {
       return `report_type must be one of the following values: ${values}`;
     },
   })
+  @Expose({ name: 'report_type' })
   reportType: ReportType;
 }

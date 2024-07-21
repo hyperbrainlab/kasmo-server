@@ -14,12 +14,14 @@ export abstract class AbstractEntity {
   @ApiProperty({ description: '생성일자' })
   @CreateDateColumn({
     type: 'timestamp',
+    name: 'created_at',
   })
-  public created_at: Date;
+  public createdAt: Date;
 
   @ApiProperty({ description: '최근 업데이트 일자' })
   @UpdateDateColumn({
     type: 'timestamp',
+    name: 'updated_at',
   })
-  updated_at: Date;
+  updatedAt: Date;
 }

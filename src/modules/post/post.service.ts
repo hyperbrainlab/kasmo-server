@@ -33,7 +33,7 @@ export class PostService {
         },
       },
       order:
-        order === 'popular' ? { view_count: 'DESC' } : { created_at: 'DESC' },
+        order === 'popular' ? { viewCount: 'DESC' } : { createdAt: 'DESC' },
       skip: offset,
       take: size,
     });

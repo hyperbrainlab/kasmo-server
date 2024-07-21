@@ -1,77 +1,99 @@
 import { ApiProperty } from '@nestjs/swagger';
-
 import { Entity, Column, OneToMany } from 'typeorm';
 import { PostEntity } from '../post/post.entity';
 import { CommentEntity } from '../comment/comment.entity';
 import { UserBlockEntity } from '../user_block/user_block.entity';
 import { ReportEntity } from '../report/report.entity';
 import { AbstractEntity } from '../common/entity/abstract.entity';
+import { Provider } from '../auth/constants';
 
 @Entity('user')
 export class UserEntity extends AbstractEntity {
-  @ApiProperty({ description: 'firebase UID' })
-  @Column({ type: 'uuid', unique: true })
+  @ApiProperty({ description: 'firebase uid', type: String })
+  @Column({ type: 'uuid', unique: true, name: 'uid' })
   uid: string;
 
-  @ApiProperty({ description: '이메일 주소' })
-  @Column()
+  @ApiProperty({ description: '이메일 주소', type: String })
+  @Column({
+    name: 'email',
+  })
   email: string;
 
   @ApiProperty({
     description: '비즈니스(스토어) 이름',
     required: false,
     nullable: true,
+    type: String,
   })
-  @Column({ nullable: true })
-  biz_name: string;
+  @Column({ nullable: true, name: 'biz_name' })
+  bizName: string;
 
-  @ApiProperty({ description: '이름' })
-  @Column()
+  @ApiProperty({ description: '이름', type: String })
+  @Column({ name: 'name' })
   name: string;
 
   @ApiProperty({
     description: '프로필 이미지 URL',
     required: false,
     nullable: true,
+    type: String,
   })
-  @Column({ nullable: true })
-  profile_image_url: string;
+  @Column({ nullable: true, name: 'profile_image_url' })
+  profileImageUrl: string;
 
-  @ApiProperty({ description: '핸드폰 번호' })
-  @Column()
-  phone_no: string;
+  @ApiProperty({ description: '핸드폰 번호', type: String })
+  @Column({ name: 'phone_no' })
+  phoneNo: string;
 
   @ApiProperty({
-    enum: ['EMAIL', 'GOOGLE', 'APPLE', 'KAKAO'],
+    enum: Provider,
   })
-  @Column()
+  @Column({ name: 'provider' })
   provider: string;
 
-  @ApiProperty({ description: '사업자 여부', default: false })
-  @Column({ default: false })
-  is_biz: boolean;
+  @ApiProperty({ description: '사업자 여부', default: false, type: Boolean })
+  @Column({ default: false, name: 'is_biz' })
+  isBiz: boolean;
 
-  @ApiProperty({ description: '유저가 작성한 게시글' })
+  @ApiProperty({
+    description: '유저가 작성한 게시글',
+    type: () => [PostEntity],
+  })
   @OneToMany(() => PostEntity, (post) => post.user)
-  posts: PostEntity[];
+  posts: [PostEntity];
 
-  @ApiProperty({ description: '유저가 작성한 댓글' })
+  @ApiProperty({
+    description: '유저가 작성한 댓글',
+    type: () => [CommentEntity],
+  })
   @OneToMany(() => CommentEntity, (comment) => comment.user)
-  comments: CommentEntity[];
+  comments: [CommentEntity];
 
-  @ApiProperty({ description: '유저가 행한 블록' })
+  @ApiProperty({
+    description: '유저가 행한 블록',
+    type: () => [UserBlockEntity],
+  })
   @OneToMany(() => UserBlockEntity, (userBlock) => userBlock.blocker)
-  blocks_made: UserBlockEntity[];
+  blocksMade: [UserBlockEntity];
 
-  @ApiProperty({ description: '유저가 당한 블록' })
+  @ApiProperty({
+    description: '유저가 당한 블록',
+    type: () => [UserBlockEntity],
+  })
   @OneToMany(() => UserBlockEntity, (userBlock) => userBlock.blocked)
-  blocks_received: UserBlockEntity[];
+  blocksReceived: [UserBlockEntity];
 
-  @ApiProperty({ description: '유저가 행한 신고' })
+  @ApiProperty({
+    description: '유저가 행한 신고',
+    type: () => [ReportEntity],
+  })
   @OneToMany(() => ReportEntity, (report) => report.reporter)
-  reports_made: ReportEntity[];
+  reportsMade: [ReportEntity];
 
-  @ApiProperty({ description: '유저가 당한 신고' })
+  @ApiProperty({
+    description: '유저가 당한 신고',
+    type: () => [ReportEntity],
+  })
   @OneToMany(() => ReportEntity, (report) => report.reported)
-  reports_received: ReportEntity[];
+  reportsReceived: [ReportEntity];
 }

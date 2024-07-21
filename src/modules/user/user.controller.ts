@@ -26,7 +26,6 @@ import { AuthGuard } from '../auth/auth.guard';
 
 import { UserProfileResponse } from './dto/retrieve.user.dto';
 import { UpdateUserRequest } from './dto/update.user.dto';
-import { mapUserEntityToUserProfileResponse } from './utils';
 
 @Controller('user')
 export class UserController {
@@ -50,7 +49,7 @@ export class UserController {
         throw new NotFoundException('User not found');
       }
 
-      return mapUserEntityToUserProfileResponse(user);
+      return user;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -73,7 +72,7 @@ export class UserController {
         updateUserRequest,
       );
 
-      return mapUserEntityToUserProfileResponse(user);
+      return user;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -95,7 +94,7 @@ export class UserController {
         throw new NotFoundException('User not found');
       }
 
-      return mapUserEntityToUserProfileResponse(user);
+      return user;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

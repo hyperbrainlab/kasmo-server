@@ -14,15 +14,16 @@ export class ReportEntity extends AbstractEntity {
   @Column({
     type: 'enum',
     enum: ReportType,
+    name: 'report_type',
   })
-  report_type: ReportType;
+  reportType: ReportType;
 
-  @ApiProperty({ description: '신고를 한 사람' })
+  @ApiProperty({ description: '신고를 한 사람', type: () => UserEntity })
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'reporter_id' })
   reporter: UserEntity;
 
-  @ApiProperty({ description: '신고를 당한 사람' })
+  @ApiProperty({ description: '신고를 당한 사람', type: () => UserEntity })
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'reported_id' })
   reported: UserEntity;
@@ -33,6 +34,7 @@ export class ReportEntity extends AbstractEntity {
   @Column({
     type: 'enum',
     enum: Status,
+    name: 'status',
   })
   status: Status;
 }

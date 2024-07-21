@@ -18,12 +18,12 @@ export class UserBlockEntity extends AbstractEntity {
   })
   status: Status;
 
-  @ApiProperty({ description: '블록을 한 사람' })
+  @ApiProperty({ description: '블록을 한 사람', type: () => UserEntity })
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'blocker_id' })
   blocker: UserEntity;
 
-  @ApiProperty({ description: '블록을 당한 사람' })
+  @ApiProperty({ description: '블록을 당한 사람', type: () => UserEntity })
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'blocked_id' })
   blocked: UserEntity;
