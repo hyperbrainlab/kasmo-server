@@ -26,6 +26,7 @@ import { AuthGuard } from '../auth/auth.guard';
 
 import { UserProfileResponse } from './dto/retrieve.user.dto';
 import { UpdateUserRequest } from './dto/update.user.dto';
+import { mapUserEntityToUserProfileResponse } from './utils';
 
 @Controller('user')
 export class UserController {
@@ -49,7 +50,7 @@ export class UserController {
         throw new NotFoundException('User not found');
       }
 
-      return user;
+      return mapUserEntityToUserProfileResponse(user);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -63,11 +64,16 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async update(@Request() req, @Body() userProfileDto: UpdateUserRequest) {
+  async update(@Request() req, @Body() updateUserRequest: UpdateUserRequest) {
     try {
       const userId = req.user.id;
 
-      return await this.userService.update(Number(userId), userProfileDto);
+      const user = await this.userService.update(
+        Number(userId),
+        updateUserRequest,
+      );
+
+      return mapUserEntityToUserProfileResponse(user);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -77,19 +83,19 @@ export class UserController {
   @ApiOperation({ summary: '유저 정보 조회' })
   @ApiTags('user')
   @ApiResponse({ status: 200, type: UserProfileResponse })
-  @Get('profile/:id')
+  @Get('profile/:userId')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async profile(@Param('id') id: number): Promise<UserProfileResponse> {
+  async profile(@Param('userId') userId: number): Promise<UserProfileResponse> {
     try {
-      const user = await this.userService.findOneById(id);
+      const user = await this.userService.findOneById(userId);
 
       if (!user) {
         throw new NotFoundException('User not found');
       }
 
-      return user;
+      return mapUserEntityToUserProfileResponse(user);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

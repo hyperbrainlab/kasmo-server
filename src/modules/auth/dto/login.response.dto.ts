@@ -4,5 +4,5 @@ import { ApiProperty } from '@nestjs/swagger';
 export class LoginResponse {
   @ApiProperty()
   @IsNotEmpty()
-  access_token: string;
+  accessToken: string;
 }

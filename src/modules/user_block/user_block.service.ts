@@ -15,14 +15,14 @@ export class UserBlockService {
   ) {}
 
   async block({
-    blocker_id,
-    blocked_id,
+    blockerUserId,
+    blockedUserId,
   }: {
-    blocker_id: number;
-    blocked_id: number;
+    blockerUserId: number;
+    blockedUserId: number;
   }) {
-    const blocker = await this.userService.findOneById(blocker_id);
-    const blocked = await this.userService.findOneById(blocked_id);
+    const blocker = await this.userService.findOneById(blockerUserId);
+    const blocked = await this.userService.findOneById(blockedUserId);
 
     if (!blocker) {
       throw new NotFoundException('Blocker user not found');

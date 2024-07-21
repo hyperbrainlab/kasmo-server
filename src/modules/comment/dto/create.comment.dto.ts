@@ -15,7 +15,7 @@ export class CreateCommentRequest {
   })
   @IsNumber()
   @IsOptional()
-  parent_comment_id?: number;
+  parentCommentId?: number;
 
   @ApiProperty({
     description: '게시글 아이디',
@@ -24,5 +24,5 @@ export class CreateCommentRequest {
   })
   @IsNumber()
   @IsNotEmpty()
-  post_id: number;
+  postId: number;
 }

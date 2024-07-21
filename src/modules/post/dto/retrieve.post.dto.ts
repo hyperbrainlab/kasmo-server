@@ -25,6 +25,16 @@ export class PostsRequest extends PaginationRequest {
   order?: SortBy;
 }
 
-export class PostsResponse extends PaginationResponse<PostEntity[]> {}
+export class PostListResponse extends PaginationResponse<PostResponse[]> {}
 
-export class PostResponse extends PostEntity {}
+export class PostResponse {
+  id: PostEntity['id'];
+  title: PostEntity['title'];
+  body: PostEntity['body'];
+  category: PostEntity['category'];
+  viewCount: PostEntity['view_count'];
+  comments: PostEntity['comments'];
+  user: PostEntity['user'];
+  createdAt: PostEntity['created_at'];
+  updatedAt: PostEntity['updated_at'];
+}

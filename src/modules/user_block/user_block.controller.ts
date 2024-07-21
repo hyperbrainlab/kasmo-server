@@ -29,17 +29,17 @@ export class UserBlockController {
   @ApiOperation({ summary: '유저 블락하기' })
   @ApiTags('user_block')
   @ApiResponse({ status: 200 })
-  @Post(':blocked_id')
+  @Post(':blockedUserId')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async report(@Request() req, @Param('blocked_id') blocked_id: number) {
+  async report(@Request() req, @Param('blockedUserId') blockedUserId: number) {
     try {
-      const blocker_id = req.user.id;
+      const blockerUserId = req.user.id;
 
       return await this.userBlockService.block({
-        blocker_id,
-        blocked_id,
+        blockerUserId,
+        blockedUserId,
       });
     } catch (error) {
       throw new InternalServerErrorException(error);

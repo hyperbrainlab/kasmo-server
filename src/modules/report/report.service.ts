@@ -16,16 +16,16 @@ export class ReportService {
   ) {}
 
   async report({
-    reporter_id,
-    reported_id,
-    report_type,
+    reporterUserId,
+    reportedUserId,
+    reportType,
   }: {
-    reporter_id: number;
-    reported_id: number;
-    report_type: ReportType;
+    reporterUserId: number;
+    reportedUserId: number;
+    reportType: ReportType;
   }) {
-    const reporter = await this.userService.findOneById(reporter_id);
-    const reported = await this.userService.findOneById(reported_id);
+    const reporter = await this.userService.findOneById(reporterUserId);
+    const reported = await this.userService.findOneById(reportedUserId);
 
     if (!reporter) {
       throw new NotFoundException('Reporter user not found');
@@ -38,7 +38,7 @@ export class ReportService {
     return await this.reportRepository.save({
       reporter,
       reported,
-      report_type,
+      report_type: reportType,
       status: Status.APPROVED, // 신고 처리 절차를 생략하고 바로 승인 상태로 처리
     });
   }

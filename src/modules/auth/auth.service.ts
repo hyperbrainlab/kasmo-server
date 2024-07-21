@@ -21,10 +21,10 @@ export class AuthService {
 
     const payload = { sub: user.uid, username: user.name, id: user.id };
 
-    const access_token = await this.jwtService.signAsync(payload);
+    const accessToken = await this.jwtService.signAsync(payload);
 
     return {
-      access_token,
+      accessToken,
     };
   }
 

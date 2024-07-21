@@ -31,7 +31,7 @@ import { CommentService } from '../comment/comment.service';
 import { CreateCommentRequest } from '../comment/dto/create.comment.dto';
 import { UpdateCommentRequest } from '../comment/dto/update.comment.dto';
 import { Categories, SortBy } from './constants';
-import { PostResponse, PostsResponse } from './dto/retrieve.post.dto';
+import { PostResponse, PostListResponse } from './dto/retrieve.post.dto';
 import { DeleteResult } from 'typeorm';
 
 @Controller('post')
@@ -44,7 +44,7 @@ export class PostController {
   @ApiBearerAuth()
   @ApiOperation({ summary: '게시글 목록 조회' })
   @ApiTags('post')
-  @ApiResponse({ status: 200, type: PostsResponse })
+  @ApiResponse({ status: 200, type: PostListResponse })
   @Get('')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
@@ -73,11 +73,11 @@ export class PostController {
   @ApiOperation({ summary: '게시글 상세 조회' })
   @ApiTags('post')
   @ApiResponse({ status: 200, type: PostResponse })
-  @Get(':post_id')
+  @Get(':postId')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async getPostById(@Param('post_id') postId: number) {
+  async getPostById(@Param('postId') postId: number) {
     try {
       await this.postService.addViewCount(postId);
       return this.postService.findOneById(postId);
@@ -106,11 +106,11 @@ export class PostController {
   @ApiOperation({ summary: '게시글 삭제' })
   @ApiTags('post')
   @ApiResponse({ status: 200, type: DeleteResult })
-  @Delete(':post_id')
+  @Delete(':postId')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async deletePost(@Param('post_id') postId: number) {
+  async deletePost(@Param('postId') postId: number) {
     try {
       return this.postService.delete(postId);
     } catch (error) {
@@ -122,12 +122,12 @@ export class PostController {
   @ApiOperation({ summary: '게시글 업데이트' })
   @ApiTags('post')
   @ApiResponse({ status: 200, type: PostResponse })
-  @Put(':post_id')
+  @Put(':postId')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   async updatePost(
-    @Param('post_id') postId: number,
+    @Param('postId') postId: number,
     @Body() updatePostRequest: UpdatePostRequest,
   ) {
     try {
@@ -141,11 +141,11 @@ export class PostController {
   @ApiOperation({ summary: '댓글 목록 조회' })
   @ApiTags('post')
   @ApiResponse({ status: 200 })
-  @Get(':post_id/comments')
+  @Get(':postId/comments')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async getComments(@Param('post_id') postId: number) {
+  async getComments(@Param('postId') postId: number) {
     try {
       return this.commentService.findAll({ postId });
     } catch (error) {
@@ -173,11 +173,11 @@ export class PostController {
   @ApiOperation({ summary: '댓글 삭제' })
   @ApiTags('post')
   @ApiResponse({ status: 200 })
-  @Delete('comment/:comment_id')
+  @Delete('comment/:commentId')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async deleteComment(@Param('comment_id') commentId: number) {
+  async deleteComment(@Param('commentId') commentId: number) {
     try {
       return this.commentService.delete(commentId);
     } catch (error) {
@@ -189,12 +189,12 @@ export class PostController {
   @ApiOperation({ summary: '댓글 업데이트' })
   @ApiTags('post')
   @ApiResponse({ status: 200, type: null })
-  @Put('comment/:comment_id')
+  @Put('comment/:commentId')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   async updateComment(
-    @Param('comment_id') commentId: number,
+    @Param('commentId') commentId: number,
     @Body() updateCommentRequest: UpdateCommentRequest,
   ) {
     try {

@@ -12,5 +12,5 @@ export class ReportRequest {
       return `report_type must be one of the following values: ${values}`;
     },
   })
-  report_type: ReportType;
+  reportType: ReportType;
 }

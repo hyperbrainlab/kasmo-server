@@ -31,22 +31,22 @@ export class ReportController {
   @ApiOperation({ summary: '신고하기' })
   @ApiTags('report')
   @ApiResponse({ status: 200 })
-  @Post(':reported_id')
+  @Post(':reportedUserId')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   async report(
     @Request() req,
-    @Param('reported_id') reported_id: number,
-    @Body() reportRequestDto: ReportRequest,
+    @Param('reportedUserId') reportedUserId: number,
+    @Body() reportRequest: ReportRequest,
   ) {
     try {
-      const reporter_id = req.user.id;
+      const reporterId = req.user.id;
 
       return await this.reportService.report({
-        reporter_id,
-        reported_id,
-        ...reportRequestDto,
+        reporterUserId: reporterId,
+        reportedUserId: reportedUserId,
+        ...reportRequest,
       });
     } catch (error) {
       throw new InternalServerErrorException(error);
