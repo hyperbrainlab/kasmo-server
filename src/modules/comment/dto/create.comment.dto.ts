@@ -1,4 +1,3 @@
-import { IsNumber, IsString, IsNotEmpty, IsOptional } from 'class-validator';
 import { Expose } from 'class-transformer';
 
 import { ApiProperty } from '@nestjs/swagger';
@@ -10,8 +9,6 @@ export class CreateCommentRequest {
     nullable: false,
     type: String,
   })
-  @IsString()
-  @IsNotEmpty()
   @Expose({ name: 'body' })
   body: string;
 
@@ -21,8 +18,6 @@ export class CreateCommentRequest {
     nullable: true,
     type: Number,
   })
-  @IsNumber()
-  @IsOptional()
   @Expose({ name: 'parent_comment_id' })
   parentCommentId?: number;
 
@@ -32,8 +27,6 @@ export class CreateCommentRequest {
     nullable: false,
     type: Number,
   })
-  @IsNumber()
-  @IsNotEmpty()
   @Expose({ name: 'post_id' })
   postId: number;
 }

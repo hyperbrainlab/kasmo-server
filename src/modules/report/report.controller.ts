@@ -11,6 +11,7 @@ import {
   InternalServerErrorException,
   ValidationPipe,
   UsePipes,
+  ParseIntPipe,
 } from '@nestjs/common';
 
 import {
@@ -37,7 +38,7 @@ export class ReportController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async report(
     @Request() req,
-    @Param('reportedUserId') reportedUserId: number,
+    @Param('reportedUserId', ParseIntPipe) reportedUserId: number,
     @Body() reportRequest: ReportRequest,
   ) {
     try {

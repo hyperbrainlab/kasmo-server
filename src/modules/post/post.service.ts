@@ -24,18 +24,19 @@ export class PostService {
     size = 10,
   }: PostsRequest): Promise<PaginationResponse<PostEntity[]>> {
     const offset = (page - 1) * size;
+
     const [posts, total] = await this.postRepository.findAndCount({
       where: {
         category,
-        title: Like(`%${keyword}%`),
+        title: keyword ? Like(`%${keyword}%`) : undefined,
         user: {
-          name: Like(`%${keyword}%`),
+          name: keyword ? Like(`%${keyword}%`) : undefined,
         },
       },
       order:
         order === 'popular' ? { viewCount: 'DESC' } : { createdAt: 'DESC' },
-      skip: offset,
-      take: size,
+      // skip: 10,
+      // take: size,
     });
 
     return {
@@ -47,13 +48,17 @@ export class PostService {
   }
 
   async findOneById(postId: number): Promise<PostEntity | undefined> {
-    const post = await this.postRepository.findOneBy({ id: postId });
-
-    return post;
+    return await this.postRepository.findOneBy({ id: postId });
   }
 
   async addViewCount(postId: number) {
-    await this.postRepository.increment({ id: postId }, 'view_count', 1);
+    const post = await this.postRepository.findOneBy({ id: postId });
+
+    if (!post) {
+      throw new Error(`Post with id ${postId} not found`);
+    }
+
+    return await this.postRepository.increment({ id: postId }, 'viewCount', 1);
   }
 
   async create(createPostRequest: CreatePostRequest) {

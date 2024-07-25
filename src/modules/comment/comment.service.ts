@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { CommentEntity } from './comment.entity';
 import { CreateCommentRequest } from './dto/create.comment.dto';
 import { UpdateCommentRequest } from './dto/update.comment.dto';
+import { CommentResponse } from './dto/retrieve.comment.dto';
 
 @Injectable()
 export class CommentService {
@@ -25,11 +26,18 @@ export class CommentService {
     return comments;
   }
 
-  async create(createCommentRequest: CreateCommentRequest) {
-    return await this.commentRepository.save(createCommentRequest);
+  async create(
+    createCommentRequest: CreateCommentRequest,
+  ): Promise<CommentResponse> {
+    const comment = await this.commentRepository.save(createCommentRequest);
+
+    return await this.commentRepository.findOneBy({ id: comment.id });
   }
 
-  async update(commentId: number, updateCommentRequest: UpdateCommentRequest) {
+  async update(
+    commentId: number,
+    updateCommentRequest: UpdateCommentRequest,
+  ): Promise<CommentResponse> {
     await this.commentRepository.update(
       { id: commentId },
       updateCommentRequest,

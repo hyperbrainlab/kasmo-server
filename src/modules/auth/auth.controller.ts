@@ -36,7 +36,9 @@ export class AuthController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async login(@Body() loginRequest: LoginRequest): Promise<LoginResponse> {
     try {
-      return await this.authService.login(loginRequest);
+      const response = await this.authService.login(loginRequest);
+
+      return response;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

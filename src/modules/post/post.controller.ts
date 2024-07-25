@@ -13,6 +13,7 @@ import {
   InternalServerErrorException,
   ValidationPipe,
   UsePipes,
+  ParseIntPipe,
 } from '@nestjs/common';
 
 import {
@@ -77,10 +78,12 @@ export class PostController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async getPostById(@Param('postId') postId: number) {
+  async getPostById(
+    @Param('postId', ParseIntPipe) postId: number,
+  ): Promise<PostResponse> {
     try {
       await this.postService.addViewCount(postId);
-      return this.postService.findOneById(postId);
+      return await this.postService.findOneById(postId);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -96,6 +99,10 @@ export class PostController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async createPost(@Body() createPostRequest: CreatePostRequest) {
     try {
+      console.log({
+        createPostRequest,
+      });
+
       return this.postService.create(createPostRequest);
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -110,7 +117,7 @@ export class PostController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async deletePost(@Param('postId') postId: number) {
+  async deletePost(@Param('postId', ParseIntPipe) postId: number) {
     try {
       return this.postService.delete(postId);
     } catch (error) {
@@ -127,7 +134,7 @@ export class PostController {
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   async updatePost(
-    @Param('postId') postId: number,
+    @Param('postId', ParseIntPipe) postId: number,
     @Body() updatePostRequest: UpdatePostRequest,
   ) {
     try {
@@ -145,7 +152,7 @@ export class PostController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async getComments(@Param('postId') postId: number) {
+  async getComments(@Param('postId', ParseIntPipe) postId: number) {
     try {
       return this.commentService.findAll({ postId });
     } catch (error) {
@@ -162,6 +169,8 @@ export class PostController {
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   async createComment(@Body() createCommentRequest: CreateCommentRequest) {
+    console.log(createCommentRequest);
+
     try {
       return this.commentService.create(createCommentRequest);
     } catch (error) {
@@ -177,7 +186,7 @@ export class PostController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async deleteComment(@Param('commentId') commentId: number) {
+  async deleteComment(@Param('commentId', ParseIntPipe) commentId: number) {
     try {
       return this.commentService.delete(commentId);
     } catch (error) {
@@ -194,7 +203,7 @@ export class PostController {
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   async updateComment(
-    @Param('commentId') commentId: number,
+    @Param('commentId', ParseIntPipe) commentId: number,
     @Body() updateCommentRequest: UpdateCommentRequest,
   ) {
     try {

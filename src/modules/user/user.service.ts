@@ -15,15 +15,11 @@ export class UserService {
   ) {}
 
   async findOneById(userId: number): Promise<UserEntity | undefined> {
-    const user = await this.userRepository.findOneBy({ id: userId });
-
-    return user;
+    return await this.userRepository.findOneBy({ id: userId });
   }
 
   async findOneByUid(uid: string): Promise<UserEntity | undefined> {
-    const user = await this.userRepository.findOneBy({ uid });
-
-    return user;
+    return await this.userRepository.findOneBy({ uid });
   }
 
   async update(userId: number, updateUserRequest: UpdateUserRequest) {
