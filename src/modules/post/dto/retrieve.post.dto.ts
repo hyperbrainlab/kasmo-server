@@ -1,38 +1,14 @@
-import { IsOptional, IsEnum } from 'class-validator';
 import { Expose } from 'class-transformer';
-
 import { ApiProperty } from '@nestjs/swagger';
-import { PaginationRequest } from 'src/modules/common/dto/pagination.request.dto';
-import { PaginationResponse } from 'src/modules/common/dto/pagination.response.dto';
-import { Categories, SortBy } from '../constants';
+
+import { Categories } from '../constants';
 import { PostEntity } from '../post.entity';
 import { CommentEntity } from 'src/modules/comment/comment.entity';
 import { UserEntity } from 'src/modules/user/user.entity';
 
-export class PostsRequest extends PaginationRequest {
-  @ApiProperty({ description: '카테고리' })
-  @IsOptional()
-  @Expose({ name: 'category' })
-  category?: Categories;
-
-  @ApiProperty({ description: '검색어' })
-  @IsOptional()
-  @Expose({ name: 'keyword' })
-  keyword?: string;
-
-  @ApiProperty({ enum: SortBy })
-  @IsEnum(SortBy, {
-    message: () => {
-      const values = Object.values(SortBy).join(', ');
-      return `order must be one of the following values: ${values}`;
-    },
-  })
-  @IsOptional()
-  @Expose({ name: 'order' })
-  order?: SortBy;
+export class PostListResponse {
+  items: PostResponse[];
 }
-
-export class PostListResponse extends PaginationResponse<PostResponse[]> {}
 
 export class PostResponse {
   @ApiProperty({ description: 'primary key', type: Number })

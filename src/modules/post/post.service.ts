@@ -2,49 +2,40 @@ import { PostEntity } from './post.entity';
 import { Injectable } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
+import {
+  FilterOperator,
+  PaginateQuery,
+  paginate,
+  Paginated,
+} from 'nestjs-paginate';
 
 import { CreatePostRequest } from './dto/create.post.dto';
 import { UpdatePostRequest } from './dto/update.post.dto';
-import { PaginationResponse } from '../common/dto/pagination.response.dto';
-import { PostsRequest } from './dto/retrieve.post.dto';
+import { UserEntity } from '../user/user.entity';
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectRepository(PostEntity)
     private readonly postRepository: Repository<PostEntity>,
+
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async paginate({
-    category,
-    keyword,
-    order,
-    page = 1,
-    size = 10,
-  }: PostsRequest): Promise<PaginationResponse<PostEntity[]>> {
-    const offset = (page - 1) * size;
-
-    const [posts, total] = await this.postRepository.findAndCount({
-      where: {
-        category,
-        title: keyword ? Like(`%${keyword}%`) : undefined,
-        user: {
-          name: keyword ? Like(`%${keyword}%`) : undefined,
-        },
+  async findAll(query: PaginateQuery): Promise<Paginated<PostEntity>> {
+    return paginate(query, this.postRepository, {
+      sortableColumns: ['createdAt', 'viewCount'],
+      nullSort: 'last',
+      defaultSortBy: [['createdAt', 'DESC']],
+      searchableColumns: ['title', 'body', 'category'],
+      filterableColumns: {
+        title: [FilterOperator.EQ, FilterOperator.IN],
+        body: [FilterOperator.EQ, FilterOperator.IN],
+        category: [FilterOperator.EQ],
       },
-      order:
-        order === 'popular' ? { viewCount: 'DESC' } : { createdAt: 'DESC' },
-      // skip: 10,
-      // take: size,
     });
-
-    return {
-      data: posts,
-      page: 1,
-      total,
-      size,
-    };
   }
 
   async findOneById(postId: number): Promise<PostEntity | undefined> {
@@ -61,8 +52,17 @@ export class PostService {
     return await this.postRepository.increment({ id: postId }, 'viewCount', 1);
   }
 
-  async create(createPostRequest: CreatePostRequest) {
-    return await this.postRepository.save(createPostRequest);
+  async create(createPostRequest: CreatePostRequest & { userId: number }) {
+    const user = await this.userRepository.findOneBy({
+      id: createPostRequest.userId,
+    });
+
+    const post = await this.postRepository.create({
+      ...createPostRequest,
+      user,
+    });
+
+    return await this.postRepository.save(post);
   }
 
   async update(commentId: number, updatePostRequest: UpdatePostRequest) {

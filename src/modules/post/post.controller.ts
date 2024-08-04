@@ -4,7 +4,6 @@ import {
   Get,
   Delete,
   Put,
-  Query,
   Param,
   Body,
   HttpCode,
@@ -14,6 +13,7 @@ import {
   ValidationPipe,
   UsePipes,
   ParseIntPipe,
+  Request,
 } from '@nestjs/common';
 
 import {
@@ -23,6 +23,13 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 
+import {
+  Paginate,
+  PaginateQuery,
+  PaginatedSwaggerDocs,
+  Paginated,
+} from 'nestjs-paginate';
+
 import { AuthGuard } from '../auth/auth.guard';
 
 import { PostService } from './post.service';
@@ -31,8 +38,7 @@ import { UpdatePostRequest } from './dto/update.post.dto';
 import { CommentService } from '../comment/comment.service';
 import { CreateCommentRequest } from '../comment/dto/create.comment.dto';
 import { UpdateCommentRequest } from '../comment/dto/update.comment.dto';
-import { Categories, SortBy } from './constants';
-import { PostResponse, PostListResponse } from './dto/retrieve.post.dto';
+import { PostResponse } from './dto/retrieve.post.dto';
 import { DeleteResult } from 'typeorm';
 
 @Controller('post')
@@ -45,26 +51,21 @@ export class PostController {
   @ApiBearerAuth()
   @ApiOperation({ summary: '게시글 목록 조회' })
   @ApiTags('post')
-  @ApiResponse({ status: 200, type: PostListResponse })
   @Get('')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
+  @Get()
+  @PaginatedSwaggerDocs(PostResponse, {
+    sortableColumns: ['createdAt', 'viewCount'],
+    searchableColumns: ['title', 'body', 'category'],
+    defaultSortBy: [['createdAt', 'DESC']],
+  })
   async getPosts(
-    @Query('category') category?: Categories,
-    @Query('keyword') keyword?: string,
-    @Query('page') page?: number,
-    @Query('size') size?: number,
-    @Query('order') order?: SortBy,
-  ) {
+    @Paginate() query: PaginateQuery,
+  ): Promise<Paginated<PostResponse>> {
     try {
-      return this.postService.paginate({
-        category,
-        keyword,
-        page,
-        size,
-        order,
-      });
+      return this.postService.findAll(query);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -97,13 +98,14 @@ export class PostController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async createPost(@Body() createPostRequest: CreatePostRequest) {
+  async createPost(
+    @Request() req,
+    @Body() createPostRequest: CreatePostRequest,
+  ) {
     try {
-      console.log({
-        createPostRequest,
-      });
+      const userId = req.user.id;
 
-      return this.postService.create(createPostRequest);
+      return this.postService.create({ ...createPostRequest, userId });
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -167,12 +169,15 @@ export class PostController {
   @Post('comment')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
-  @UsePipes(new ValidationPipe({ transform: true }))
-  async createComment(@Body() createCommentRequest: CreateCommentRequest) {
-    console.log(createCommentRequest);
-
+  @UsePipes(new ValidationPipe({ transform: false }))
+  async createComment(
+    @Request() req,
+    @Body() createCommentRequest: CreateCommentRequest,
+  ) {
     try {
-      return this.commentService.create(createCommentRequest);
+      const userId = req.user.id;
+
+      return this.commentService.create({ ...createCommentRequest, userId });
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
