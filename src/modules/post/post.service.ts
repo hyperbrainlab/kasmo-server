@@ -29,11 +29,12 @@ export class PostService {
       sortableColumns: ['createdAt', 'viewCount'],
       nullSort: 'last',
       defaultSortBy: [['createdAt', 'DESC']],
-      searchableColumns: ['title', 'body', 'category'],
+      searchableColumns: ['title', 'body', 'category', 'subCategory'],
       filterableColumns: {
         title: [FilterOperator.EQ, FilterOperator.IN],
         body: [FilterOperator.EQ, FilterOperator.IN],
         category: [FilterOperator.EQ],
+        subCategory: [FilterOperator.EQ],
       },
     });
   }

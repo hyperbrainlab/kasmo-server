@@ -6,10 +6,6 @@ import { PostEntity } from '../post.entity';
 import { CommentEntity } from 'src/modules/comment/comment.entity';
 import { UserEntity } from 'src/modules/user/user.entity';
 
-export class PostListResponse {
-  items: PostResponse[];
-}
-
 export class PostResponse {
   @ApiProperty({ description: 'primary key', type: Number })
   @Expose({ name: 'id' })
@@ -26,6 +22,10 @@ export class PostResponse {
   @ApiProperty({ enum: Categories })
   @Expose({ name: 'category' })
   category: PostEntity['category'];
+
+  @ApiProperty({ description: 'Sub Category' })
+  @Expose({ name: 'sub_category' })
+  subCategory: PostEntity['subCategory'];
 
   @ApiProperty({ description: '조회수', type: Number })
   @Expose({ name: 'view_count' })

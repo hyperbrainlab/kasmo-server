@@ -40,6 +40,7 @@ import { CreateCommentRequest } from '../comment/dto/create.comment.dto';
 import { UpdateCommentRequest } from '../comment/dto/update.comment.dto';
 import { PostResponse } from './dto/retrieve.post.dto';
 import { DeleteResult } from 'typeorm';
+import { PostEntity } from './post.entity';
 
 @Controller('post')
 export class PostController {
@@ -58,12 +59,12 @@ export class PostController {
   @Get()
   @PaginatedSwaggerDocs(PostResponse, {
     sortableColumns: ['createdAt', 'viewCount'],
-    searchableColumns: ['title', 'body', 'category'],
+    searchableColumns: ['title', 'body', 'category', 'subCategory'],
     defaultSortBy: [['createdAt', 'DESC']],
   })
   async getPosts(
     @Paginate() query: PaginateQuery,
-  ): Promise<Paginated<PostResponse>> {
+  ): Promise<Paginated<PostEntity>> {
     try {
       return this.postService.findAll(query);
     } catch (error) {
