@@ -62,7 +62,7 @@ export class UserController {
   @Put('profile')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @UsePipes(new ValidationPipe({ transform: false }))
   async update(@Request() req, @Body() updateUserRequest: UpdateUserRequest) {
     try {
       const userId = req.user.id;
