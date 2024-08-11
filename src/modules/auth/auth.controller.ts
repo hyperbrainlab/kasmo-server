@@ -65,9 +65,9 @@ export class AuthController {
   @UseGuards(AuthGuard)
   async withdraw(@Request() req) {
     try {
-      const id = req.user.id;
+      const userId = req.user.id;
 
-      return this.userService.delete(Number(id));
+      return this.userService.delete(Number(userId));
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

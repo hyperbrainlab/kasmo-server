@@ -29,4 +29,14 @@ export class CreateCommentRequest {
   })
   @Expose({ name: 'post_id' })
   postId: number;
+
+  @ApiProperty({
+    description: '비밀 댓글 여부',
+    required: true,
+    nullable: false,
+    type: Boolean,
+    default: false,
+  })
+  @Expose({ name: 'is_private' })
+  isPrivate: boolean;
 }

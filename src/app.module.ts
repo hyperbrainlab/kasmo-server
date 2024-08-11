@@ -11,6 +11,9 @@ import { ReportModule } from './modules/report/report.module';
 import { UserBlockModule } from './modules/user_block/user_block.module';
 import { PostModule } from './modules/post/post.module';
 import { CommentModule } from './modules/comment/comment.module';
+import { ChatModule } from './modules/chat/chat.module';
+import { ChatRoomModule } from './modules/chat_room/chat_room.module';
+import { ChatGateway } from './modules/chat/chat.gateway';
 
 @Module({
   imports: [
@@ -32,8 +35,10 @@ import { CommentModule } from './modules/comment/comment.module';
     UserBlockModule,
     PostModule,
     CommentModule,
+    ChatModule,
+    ChatRoomModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule {}

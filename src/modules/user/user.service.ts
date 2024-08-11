@@ -14,6 +14,28 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
+  async findUser(userId: number) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: [
+        'posts',
+        'comments',
+        'blocksMade',
+        'blocksReceived',
+        'reportsMade',
+        'reportsReceived',
+      ],
+    });
+
+    return {
+      ...user,
+      // TODO:: 방문자 수 추가
+      visitsCount: 0,
+      postsCount: user.posts.length,
+      commentsCount: user.comments.length,
+    };
+  }
+
   async findOneById(userId: number): Promise<UserEntity | undefined> {
     return await this.userRepository.findOneBy({ id: userId });
   }

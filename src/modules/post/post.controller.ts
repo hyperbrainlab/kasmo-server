@@ -151,7 +151,7 @@ export class PostController {
   @ApiOperation({ summary: '댓글 목록 조회' })
   @ApiTags('post')
   @ApiResponse({ status: 200 })
-  @Get(':postId/comments')
+  @Get(':postId/comment')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))

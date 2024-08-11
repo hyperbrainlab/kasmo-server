@@ -17,9 +17,11 @@ export class CommentEntity extends AbstractEntity {
   post: PostEntity;
 
   @ApiProperty({ description: '상위 댓글 정보', type: () => CommentEntity })
-  @ManyToOne(() => CommentEntity, (comment) => comment.childComments)
+  @ManyToOne(() => CommentEntity, (comment) => comment.childComments, {
+    nullable: true,
+  })
   @JoinColumn({ name: 'parent_comment_id' })
-  parentComment: CommentEntity;
+  parentComment: CommentEntity | null;
 
   @ApiProperty({
     description: '하위 댓글 정보',
@@ -32,4 +34,8 @@ export class CommentEntity extends AbstractEntity {
   @ManyToOne(() => UserEntity, (user) => user.comments)
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
+
+  @ApiProperty({ description: '비밀 댓글 여부', type: Boolean })
+  @JoinColumn({ name: 'is_private' })
+  isPrivate: boolean;
 }

@@ -97,4 +97,25 @@ export class UserProfileResponse {
   })
   @Expose({ name: 'reports_received' })
   reportsReceived: [ReportEntity];
+
+  @ApiProperty({
+    description: '방문 횟수',
+    type: Number,
+  })
+  @Expose({ name: 'visits_count' })
+  visitsCount: number;
+
+  @ApiProperty({
+    description: '게시글 수',
+    type: Number,
+  })
+  @Expose({ name: 'visits_count' })
+  postsCount: number;
+
+  @ApiProperty({
+    description: '댓글 수',
+    type: Number,
+  })
+  @Expose({ name: 'visits_count' })
+  commentsCount: number;
 }

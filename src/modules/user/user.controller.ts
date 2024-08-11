@@ -43,7 +43,7 @@ export class UserController {
     try {
       const userId = req.user.id;
 
-      const user = await this.userService.findOneById(userId);
+      const user = await this.userService.findUser(userId);
 
       if (!user) {
         throw new NotFoundException('User not found');
@@ -88,7 +88,7 @@ export class UserController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async profile(@Param('userId') userId: number): Promise<UserProfileResponse> {
     try {
-      const user = await this.userService.findOneById(userId);
+      const user = await this.userService.findUser(userId);
 
       if (!user) {
         throw new NotFoundException('User not found');

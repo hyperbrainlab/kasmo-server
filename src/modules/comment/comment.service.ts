@@ -27,8 +27,9 @@ export class CommentService {
     const comments = await this.commentRepository.find({
       where: {
         post: { id: postId },
+        parentComment: null,
       },
-      relations: ['post', 'user'],
+      relations: ['post', 'user', 'parentComment', 'childComments'],
     });
 
     return comments;

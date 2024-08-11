@@ -6,6 +6,7 @@ import { UserBlockEntity } from '../user_block/user_block.entity';
 import { ReportEntity } from '../report/report.entity';
 import { AbstractEntity } from '../common/entity/abstract.entity';
 import { Provider } from '../auth/constants';
+import { ChatRoomEntity } from '../chat_room/chat_room.entity';
 
 @Entity('user')
 export class UserEntity extends AbstractEntity {
@@ -96,4 +97,18 @@ export class UserEntity extends AbstractEntity {
   })
   @OneToMany(() => ReportEntity, (report) => report.reported)
   reportsReceived: [ReportEntity];
+
+  @ApiProperty({
+    description: '',
+    type: () => [ChatRoomEntity],
+  })
+  @OneToMany(() => ChatRoomEntity, (chatRoom) => chatRoom.creator)
+  createdChatRooms: [ChatRoomEntity];
+
+  @ApiProperty({
+    description: '',
+    type: () => [ChatRoomEntity],
+  })
+  @OneToMany(() => ChatRoomEntity, (chatRoom) => chatRoom.recipient)
+  chatRoomsForRecipients: [ChatRoomEntity];
 }

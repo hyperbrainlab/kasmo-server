@@ -25,7 +25,7 @@ export class PostService {
   ) {}
 
   async findAll(query: PaginateQuery): Promise<Paginated<PostEntity>> {
-    return paginate(query, this.postRepository, {
+    return await paginate(query, this.postRepository, {
       sortableColumns: ['createdAt', 'viewCount'],
       nullSort: 'last',
       defaultSortBy: [['createdAt', 'DESC']],
@@ -36,6 +36,7 @@ export class PostService {
         category: [FilterOperator.EQ],
         subCategory: [FilterOperator.EQ],
       },
+      // relations: ['user'],
     });
   }
 

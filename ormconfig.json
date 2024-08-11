@@ -1,0 +1,9 @@
+{
+  "type": "mysql",
+  "host": "kasmo.c3soqac6wb96.us-east-2.rds.amazonaws.com",
+  "username": "admin",
+  "password": "me_9d8v4Q8?WVx$",
+  "database": "kasmo_app",
+  "entities": ["dist/**/*.entity{.ts,.js}"],
+  "synchronize": true
+}
