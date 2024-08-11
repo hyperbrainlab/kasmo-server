@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 import { ConfigService } from '@nestjs/config';
 
-import serviceAccountKey from './serviceAccountKey.json';
+import serviceAccountKey from '../../../serviceAccountKey.json';
 
 @Injectable()
 export class FirebaseService {
