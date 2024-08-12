@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY . .
 
-COPY serviceAccountKey.json /app/serviceAccountKey.json
+COPY serviceAccountKey.json /app/dist/serviceAccountKey.json
 
 RUN npm install
 
