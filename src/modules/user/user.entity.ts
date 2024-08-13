@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm';
 import { PostEntity } from '../post/post.entity';
 import { CommentEntity } from '../comment/comment.entity';
 import { UserBlockEntity } from '../user_block/user_block.entity';
@@ -7,6 +7,7 @@ import { ReportEntity } from '../report/report.entity';
 import { AbstractEntity } from '../common/entity/abstract.entity';
 import { Provider } from '../auth/constants';
 import { ChatRoomEntity } from '../chat_room/chat_room.entity';
+import { NotificationEntity } from '../notification/notification.entity';
 
 @Entity('user')
 export class UserEntity extends AbstractEntity {
@@ -111,4 +112,8 @@ export class UserEntity extends AbstractEntity {
   })
   @OneToMany(() => ChatRoomEntity, (chatRoom) => chatRoom.recipient)
   chatRoomsForRecipients: [ChatRoomEntity];
+
+  @OneToOne(() => NotificationEntity, (notification) => notification.user)
+  @JoinColumn({ name: 'notification_id' })
+  notification: NotificationEntity;
 }

@@ -27,6 +27,10 @@ export class PostResponse {
   @Expose({ name: 'sub_category' })
   subCategory: PostEntity['subCategory'];
 
+  @ApiProperty({ description: '게시글 썸네일 이미지' })
+  @Expose({ name: 'thumbnail_image_url' })
+  thumnailImageUrl: PostEntity['thumnailImageUrl'];
+
   @ApiProperty({ description: '조회수', type: Number })
   @Expose({ name: 'view_count' })
   viewCount: PostEntity['viewCount'];
