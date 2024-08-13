@@ -27,6 +27,7 @@ import { CreateBizDirectoryRequest } from './dto/create.biz_directory.dto';
 import { UpdateBizDirectoryRequest } from './dto/update.biz_directory.dto';
 import { BizDirectoryResponse } from './dto/retrieve.biz_directory.dto';
 import { DeleteResult } from 'typeorm';
+import { Paginate, PaginatedSwaggerDocs, PaginateQuery } from 'nestjs-paginate';
 
 @Controller('biz')
 export class BizDirectoryController {
@@ -39,9 +40,14 @@ export class BizDirectoryController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Get('')
-  async getBizDirectory() {
+  @PaginatedSwaggerDocs(BizDirectoryResponse, {
+    sortableColumns: ['createdAt'],
+    searchableColumns: ['category'],
+    defaultSortBy: [['createdAt', 'DESC']],
+  })
+  async getBizDirectory(@Paginate() query: PaginateQuery) {
     try {
-      return await this.bizDirectoryService.getBizDirectory();
+      return await this.bizDirectoryService.getBizDirectory(query);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
