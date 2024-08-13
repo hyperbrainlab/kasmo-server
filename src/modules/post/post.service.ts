@@ -25,7 +25,7 @@ export class PostService {
   ) {}
 
   async findAll(query: PaginateQuery): Promise<Paginated<PostEntity>> {
-    return await paginate(query, this.postRepository, {
+    const result = await paginate(query, this.postRepository, {
       sortableColumns: ['createdAt', 'viewCount'],
       nullSort: 'last',
       defaultSortBy: [['createdAt', 'DESC']],
@@ -38,10 +38,15 @@ export class PostService {
       },
       // relations: ['user'],
     });
+
+    return result;
   }
 
   async findOneById(postId: number): Promise<PostEntity | undefined> {
-    return await this.postRepository.findOneBy({ id: postId });
+    return await this.postRepository.findOne({
+      where: { id: postId },
+      relations: ['user'],
+    });
   }
 
   async addViewCount(postId: number) {

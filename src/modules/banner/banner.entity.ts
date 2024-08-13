@@ -8,6 +8,9 @@ export class BannerEntity extends AbstractEntity {
   @JoinColumn({ name: 'image_url' })
   imageUrl: string;
 
-  @Column({ type: 'number' })
+  @Column({ type: 'text', nullable: true })
+  description: string;
+
+  @Column({ type: 'integer' })
   order: number;
 }

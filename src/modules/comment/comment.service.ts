@@ -29,7 +29,13 @@ export class CommentService {
         post: { id: postId },
         parentComment: null,
       },
-      relations: ['post', 'user', 'parentComment', 'childComments'],
+      relations: [
+        'post',
+        'user',
+        'parentComment',
+        'childComments',
+        'childComments.user',
+      ],
     });
 
     return comments;
@@ -43,8 +49,8 @@ export class CommentService {
     let parentComment, post;
 
     if (parentCommentId) {
-      parentComment = await this.commentRepository.findOneBy({
-        id: Number(parentCommentId),
+      parentComment = await this.commentRepository.findOne({
+        where: { id: parentCommentId },
       });
     }
 

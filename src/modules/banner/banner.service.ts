@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BannerEntity } from './banner.entity';
-import { UpdateBizDirectoryRequest } from './dto/update.banner.dto';
-import { CreateBizDirectoryRequest } from './dto/create.banner.dto';
-import { BizDirectoryResponse } from './dto/retrieve.banner.dto';
+import { UpdateBannerRequest } from './dto/update.banner.dto';
+import { CreateBannerRequest } from './dto/create.banner.dto';
+import { BannerResponse } from './dto/retrieve.banner.dto';
 
 @Injectable()
 export class BannerService {
@@ -15,29 +15,26 @@ export class BannerService {
   ) {}
 
   async createBanner(
-    createBizDirectoryRequest: CreateBizDirectoryRequest,
-  ): Promise<BizDirectoryResponse> {
-    return this.bannerRepository.save(createBizDirectoryRequest);
+    createBannerRequest: CreateBannerRequest,
+  ): Promise<BannerResponse> {
+    return this.bannerRepository.save(createBannerRequest);
   }
 
-  async updateBanner(
-    id: number,
-    updateBizDirectoryRequest: UpdateBizDirectoryRequest,
-  ) {
-    await this.bannerRepository.update(id, updateBizDirectoryRequest);
+  async updateBanner(id: number, updateBannerRequest: UpdateBannerRequest) {
+    await this.bannerRepository.update(id, updateBannerRequest);
   }
 
   async deleteBanner(id: number): Promise<void> {
     await this.bannerRepository.delete(id);
   }
 
-  async getBannerById(id: number): Promise<BizDirectoryResponse> {
+  async getBannerById(id: number): Promise<BannerResponse> {
     return this.bannerRepository.findOne({
       where: { id },
     });
   }
 
-  async getBanner(): Promise<BizDirectoryResponse[]> {
+  async getBanner(): Promise<BannerResponse[]> {
     return this.bannerRepository.find();
   }
 }
