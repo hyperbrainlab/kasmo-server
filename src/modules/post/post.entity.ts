@@ -7,7 +7,6 @@ import {
   JobListingsSubCategories,
   UsedGoodsSubCategories,
   RealEstateSubCategories,
-  BusinessDirectorySubCategories,
   PickupMovingSubCategories,
   MeetingsSubCategories,
   CurrencyExchangeSubCategories,
@@ -59,15 +58,6 @@ export class PostEntity extends AbstractEntity {
   //       if (
   //         !Object.values(RealEstateSubCategories).includes(
   //           this.subCategory as RealEstateSubCategories,
-  //         )
-  //       ) {
-  //         throw new Error(`Invalid subCategory for category ${this.category}`);
-  //       }
-  //       break;
-  //     case Categories.BUSINESS_DIRECTORY:
-  //       if (
-  //         !Object.values(BusinessDirectorySubCategories).includes(
-  //           this.subCategory as BusinessDirectorySubCategories,
   //         )
   //       ) {
   //         throw new Error(`Invalid subCategory for category ${this.category}`);

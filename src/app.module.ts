@@ -13,6 +13,9 @@ import { PostModule } from './modules/post/post.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { ChatRoomModule } from './modules/chat_room/chat_room.module';
+import { BizDirectoryModule } from './modules/biz_directory/biz_directory.module';
+import { BannerModule } from './modules/banner/banner.module';
+
 import { ChatGateway } from './modules/chat/chat.gateway';
 
 @Module({
@@ -37,6 +40,8 @@ import { ChatGateway } from './modules/chat/chat.gateway';
     CommentModule,
     ChatModule,
     ChatRoomModule,
+    BizDirectoryModule,
+    BannerModule,
   ],
   controllers: [AppController],
   providers: [AppService, ChatGateway],

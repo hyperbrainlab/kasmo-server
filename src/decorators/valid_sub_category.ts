@@ -11,7 +11,6 @@ import {
   JobListingsSubCategories,
   UsedGoodsSubCategories,
   RealEstateSubCategories,
-  BusinessDirectorySubCategories,
   PickupMovingSubCategories,
   MeetingsSubCategories,
   CurrencyExchangeSubCategories,
@@ -31,10 +30,6 @@ export class IsValidSubCategoryConstraint
         return Object.values(UsedGoodsSubCategories).includes(subCategory);
       case Categories.REAL_ESTATE:
         return Object.values(RealEstateSubCategories).includes(subCategory);
-      case Categories.BUSINESS_DIRECTORY:
-        return Object.values(BusinessDirectorySubCategories).includes(
-          subCategory,
-        );
       case Categories.PICKUP_MOVING:
         return Object.values(PickupMovingSubCategories).includes(subCategory);
       case Categories.MEETINGS:
