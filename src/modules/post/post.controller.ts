@@ -49,12 +49,10 @@ export class PostController {
     private commentService: CommentService,
   ) {}
 
-  @ApiBearerAuth()
   @ApiOperation({ summary: '게시글 목록 조회' })
   @ApiTags('post')
   @Get('')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Get()
   @PaginatedSwaggerDocs(PostResponse, {
@@ -72,13 +70,11 @@ export class PostController {
     }
   }
 
-  @ApiBearerAuth()
   @ApiOperation({ summary: '게시글 상세 조회' })
   @ApiTags('post')
   @ApiResponse({ status: 200, type: PostResponse })
   @Get(':postId')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   async getPostById(
     @Param('postId', ParseIntPipe) postId: number,
@@ -147,13 +143,11 @@ export class PostController {
     }
   }
 
-  @ApiBearerAuth()
   @ApiOperation({ summary: '댓글 목록 조회' })
   @ApiTags('post')
   @ApiResponse({ status: 200 })
   @Get(':postId/comment')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   async getComments(@Param('postId', ParseIntPipe) postId: number) {
     try {
