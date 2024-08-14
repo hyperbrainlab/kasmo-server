@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NotificationEntity } from './notification.entity';
 import { UpdateNotificationRequest } from './dto/update.notification.dto';
+import { CreateNotificationRequest } from './dto/create.notification.dto';
 
 @Injectable()
 export class NotificationService {
@@ -12,9 +13,34 @@ export class NotificationService {
     private readonly notificationRepository: Repository<NotificationEntity>,
   ) {}
 
-  async getNotification(id: number) {
-    return await this.notificationRepository.findOne({
-      where: { user: { id } },
+  async getNotification(userId: number) {
+    const result = await this.notificationRepository.findOne({
+      where: { user: { id: userId } },
+    });
+
+    if (!result) {
+      await this.createNotification(userId, {
+        chatNotification: true,
+        postCommentNotification: true,
+        replyCommentNotification: true,
+        announcementNotification: true,
+      });
+    } else {
+      return result;
+    }
+
+    return this.notificationRepository.findOne({
+      where: { user: { id: userId } },
+    });
+  }
+
+  async createNotification(
+    userId: number,
+    createNotificationRequest: CreateNotificationRequest,
+  ) {
+    await this.notificationRepository.insert({
+      user: { id: userId },
+      ...createNotificationRequest,
     });
   }
 

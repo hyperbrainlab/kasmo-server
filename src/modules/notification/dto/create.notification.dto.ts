@@ -2,7 +2,7 @@ import { IsNotEmpty, IsBoolean } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdateNotificationRequest {
+export class CreateNotificationRequest {
   @ApiProperty({
     description: '채팅 알림',
     required: true,

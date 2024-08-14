@@ -57,6 +57,6 @@ export class SignupRequest {
   @ApiProperty({ description: '사업자 여부', default: false })
   @IsBoolean()
   @Transform(({ value }) => value === 'true')
-  @Expose({ name: 'isBiz' })
+  @Expose({ name: 'is_biz' })
   isBiz: boolean;
 }

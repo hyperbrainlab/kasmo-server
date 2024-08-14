@@ -36,6 +36,7 @@ export class CommentEntity extends AbstractEntity {
   user: UserEntity;
 
   @ApiProperty({ description: '비밀 댓글 여부', type: Boolean })
+  @Column({ type: 'boolean', default: false, name: 'is_private' })
   @JoinColumn({ name: 'is_private' })
   isPrivate: boolean;
 }

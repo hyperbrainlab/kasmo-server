@@ -1,4 +1,4 @@
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -37,6 +37,7 @@ export class CreateCommentRequest {
     type: Boolean,
     default: false,
   })
+  @Transform(({ value }) => value === 'true')
   @Expose({ name: 'is_private' })
   isPrivate: boolean;
 }

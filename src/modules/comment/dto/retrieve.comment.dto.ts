@@ -32,4 +32,8 @@ export class CommentResponse {
   @ApiProperty({ description: '작성자 정보', type: () => UserEntity })
   @Expose({ name: 'user' })
   user: CommentEntity['user'];
+
+  @ApiProperty({ description: '비밀 댓글 여부', type: Boolean })
+  @Expose({ name: 'is_private' })
+  isPrivate: CommentEntity['isPrivate'];
 }
