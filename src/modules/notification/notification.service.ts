@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { plainToClass } from 'class-transformer';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -45,9 +46,38 @@ export class NotificationService {
   }
 
   async updateNotification(
-    id: number,
+    userId: number,
     updateNotificationRequest: UpdateNotificationRequest,
   ) {
-    await this.notificationRepository.update(id, updateNotificationRequest);
+    const notification = await this.notificationRepository.findOne({
+      where: { user: { id: userId } },
+    });
+
+    if (!notification) {
+      await this.createNotification(userId, {
+        chatNotification: true,
+        postCommentNotification: true,
+        replyCommentNotification: true,
+        announcementNotification: true,
+      });
+
+      return this.notificationRepository.findOne({
+        where: { user: { id: userId } },
+      });
+    } else {
+      const transformedRequest = plainToClass(
+        UpdateNotificationRequest,
+        updateNotificationRequest,
+      );
+
+      await this.notificationRepository.update(
+        notification.id,
+        transformedRequest,
+      );
+
+      return await this.notificationRepository.findOneBy({
+        id: notification.id,
+      });
+    }
   }
 }

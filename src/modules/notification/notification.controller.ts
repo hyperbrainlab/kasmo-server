@@ -1,7 +1,7 @@
 import {
   Controller,
   Get,
-  Put,
+  Patch,
   Body,
   Request,
   HttpCode,
@@ -50,7 +50,7 @@ export class NotificationController {
   @ApiResponse({ status: 200 })
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
-  @Put('')
+  @Patch('')
   async updateNotification(
     @Request() req,
     @Body() updateNotificationRequest: UpdateNotificationRequest,
