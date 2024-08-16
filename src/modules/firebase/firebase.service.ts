@@ -9,13 +9,15 @@ export class FirebaseService {
   private db: admin.database.Database;
 
   constructor(private configService: ConfigService) {
-    admin.initializeApp({
-      credential: admin.credential.cert(
-        serviceAccountKey as admin.ServiceAccount,
-      ),
-      databaseURL: this.configService.get<string>('FIREBASE_DB_URL'),
-    });
-    this.db = admin.database();
+    if (!admin.apps.length) {
+      admin.initializeApp({
+        credential: admin.credential.cert(
+          serviceAccountKey as admin.ServiceAccount,
+        ),
+        databaseURL: this.configService.get<string>('FIREBASE_DB_URL'),
+      });
+      this.db = admin.database();
+    }
   }
 
   getDatabase() {

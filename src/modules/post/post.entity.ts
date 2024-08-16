@@ -13,12 +13,11 @@ export class PostEntity extends AbstractEntity {
   @Column({
     type: 'enum',
     enum: Categories,
-    name: 'category',
   })
   category: Categories;
 
   @ApiProperty({ description: '서브 카테고리', enum: SubCategories })
-  @Column({ nullable: true })
+  @Column({ type: 'enum', enum: SubCategories, nullable: true })
   subCategory: SubCategories;
 
   @ApiProperty({ description: '제목', type: String })

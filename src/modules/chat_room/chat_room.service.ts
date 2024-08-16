@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ChatRoomEntity } from './chat_room.entity';
 import { UserEntity } from '../user/user.entity';
+import { ChatService } from '../chat/chat.service';
+import { getUnreadMessagesCount } from '../chat/utils';
 
 @Injectable()
 export class ChatRoomService {
@@ -13,6 +15,8 @@ export class ChatRoomService {
 
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+
+    private readonly chatService: ChatService,
   ) {}
 
   async createChatRoom(
@@ -48,7 +52,7 @@ export class ChatRoomService {
   }
 
   async getChatRoomsForUser(userId: number): Promise<ChatRoomEntity[]> {
-    return this.chatRoomRepository
+    const chatRooms = await this.chatRoomRepository
       .createQueryBuilder('chatroom')
       .where('chatroom.creator = :userId OR chatroom.recipient = :userId', {
         userId,
@@ -56,5 +60,26 @@ export class ChatRoomService {
       .leftJoinAndSelect('chatroom.creator', 'creator')
       .leftJoinAndSelect('chatroom.recipient', 'recipient')
       .getMany();
+
+    const chatRoomsWithLastMessages = await Promise.all(
+      chatRooms.map(async (room) => {
+        const messeges = await this.chatService.getMessages(`${room.id}`);
+
+        const unreadMessagesCount = getUnreadMessagesCount(messeges, userId);
+
+        room.unreadMessagesCount = unreadMessagesCount[room.id] || 0;
+
+        const lastMessageData = await this.chatService.getLastMessageForRoom(
+          room.id,
+        );
+        if (lastMessageData) {
+          room.lastMessage = lastMessageData.text;
+          room.lastMessageTime = new Date(lastMessageData.timestamp * 1000); // Firebase 타임스탬프는 초 단위이므로 밀리초로 변환
+        }
+        return room;
+      }),
+    );
+
+    return chatRoomsWithLastMessages;
   }
 }

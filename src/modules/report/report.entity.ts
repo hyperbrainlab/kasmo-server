@@ -14,7 +14,6 @@ export class ReportEntity extends AbstractEntity {
   @Column({
     type: 'enum',
     enum: ReportType,
-    name: 'report_type',
   })
   reportType: ReportType;
 

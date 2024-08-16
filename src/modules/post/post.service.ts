@@ -48,7 +48,7 @@ export class PostService {
         category: [FilterOperator.EQ],
         subCategory: [FilterOperator.EQ],
       },
-      relations: ['user'],
+      // relations: ['user'],
     });
   }
 

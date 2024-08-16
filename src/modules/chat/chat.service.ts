@@ -5,6 +5,7 @@ import { FirebaseService } from '../firebase/firebase.service';
 import { ChatRoomEntity } from '../chat_room/chat_room.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Message } from './dto/retrieve.chat.dto';
 
 @Injectable()
 export class ChatService {
@@ -45,11 +46,33 @@ export class ChatService {
     });
   }
 
-  async getMessages(roomId: string): Promise<any[]> {
+  async getMessages(roomId: string): Promise<Message[]> {
     const snapshot = await this.db
       .ref(`chatrooms/${roomId}/messages`)
       .once('value');
     const messages = snapshot.val();
     return messages ? Object.values(messages) : [];
+  }
+
+  async getLastMessageForRoom(roomId: number) {
+    const db = admin.database();
+    const messagesRef = db.ref(`chatrooms/${roomId}/messages`);
+
+    const snapshot = await messagesRef
+      .orderByKey()
+      .limitToLast(1)
+      .once('value');
+
+    const lastMessage = snapshot.val();
+
+    if (lastMessage) {
+      const key = Object.keys(lastMessage)[0];
+      return {
+        key,
+        ...lastMessage[key],
+      };
+    } else {
+      return null;
+    }
   }
 }
