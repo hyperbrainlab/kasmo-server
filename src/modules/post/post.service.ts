@@ -24,6 +24,30 @@ export class PostService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
+  async getCommentCountForPost(postId: number): Promise<number> {
+    const count = await this.postRepository
+      .createQueryBuilder('post')
+      .leftJoin('post.comments', 'comments')
+      .where('post.id = :postId', { postId })
+      .select('COUNT(comments.id)', 'count')
+      .getRawOne();
+
+    return parseInt(count.count, 10);
+  }
+
+  async getUserByPostId(postId: number): Promise<UserEntity> {
+    const post = await this.postRepository.findOne({
+      where: { id: postId },
+      relations: ['user', 'comments'],
+    });
+
+    if (!post) {
+      return null;
+    }
+
+    return post.user;
+  }
+
   async findAll(query: PaginateQuery): Promise<Paginated<PostEntity>> {
     // const queryBuilder = this.postRepository
     //   .createQueryBuilder('post')
@@ -37,19 +61,42 @@ export class PostService {
     //   'post.subCategory',
     // ]);
 
-    return await paginate<PostEntity>(query, this.postRepository, {
-      sortableColumns: ['createdAt', 'viewCount'],
-      nullSort: 'last',
-      defaultSortBy: [['createdAt', 'DESC']],
-      searchableColumns: ['title', 'body', 'category', 'subCategory'],
-      filterableColumns: {
-        title: [FilterOperator.EQ, FilterOperator.IN],
-        body: [FilterOperator.EQ, FilterOperator.IN],
-        category: [FilterOperator.EQ],
-        subCategory: [FilterOperator.EQ],
+    const paginatedPosts = await paginate<PostEntity>(
+      query,
+      this.postRepository,
+      {
+        sortableColumns: ['createdAt', 'viewCount'],
+        nullSort: 'last',
+        defaultSortBy: [['createdAt', 'DESC']],
+        searchableColumns: ['title', 'body', 'category', 'subCategory'],
+        filterableColumns: {
+          title: [FilterOperator.EQ, FilterOperator.IN],
+          body: [FilterOperator.EQ, FilterOperator.IN],
+          category: [FilterOperator.EQ],
+          subCategory: [FilterOperator.EQ],
+        },
+        // relations: ['user'],
       },
-      // relations: ['user'],
-    });
+    );
+
+    const postsWithUser = await Promise.all(
+      paginatedPosts.data.map(async (post) => {
+        const user = await this.getUserByPostId(post.id);
+        const commentsCount = await this.getCommentCountForPost(post.id);
+
+        return {
+          ...post,
+          commentsCount,
+          user,
+        };
+      }),
+    );
+
+    return {
+      data: postsWithUser,
+      meta: paginatedPosts.meta,
+      links: paginatedPosts.links,
+    };
   }
 
   async findOneById(postId: number): Promise<PostEntity | undefined> {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { ChatRoomEntity } from './chat_room.entity';
 import { UserEntity } from '../user/user.entity';
 import { ChatService } from '../chat/chat.service';
@@ -74,7 +74,7 @@ export class ChatRoomService {
         );
         if (lastMessageData) {
           room.lastMessage = lastMessageData.text;
-          room.lastMessageTime = new Date(lastMessageData.timestamp * 1000); // Firebase 타임스탬프는 초 단위이므로 밀리초로 변환
+          room.lastMessageTime = new Date(lastMessageData.timestamp * 1000);
         }
         return room;
       }),

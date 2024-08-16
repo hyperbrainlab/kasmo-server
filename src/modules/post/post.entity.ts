@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 
 import { Categories, SubCategories } from './constants';
 
@@ -42,6 +42,7 @@ export class PostEntity extends AbstractEntity {
 
   @ApiProperty({ description: '게시글 작성자', type: () => UserEntity })
   @ManyToOne(() => UserEntity, (user) => user.posts)
+  @JoinColumn()
   user: UserEntity;
 
   @ApiProperty({
