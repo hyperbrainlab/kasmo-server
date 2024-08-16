@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Post,
   Patch,
   Body,
   Request,
@@ -22,10 +23,54 @@ import { AuthGuard } from '../auth/auth.guard';
 import { NotificationService } from './notification.service';
 import { NotificationResponse } from './dto/retrieve.notification.dto';
 import { UpdateNotificationRequest } from './dto/update.notification.dto';
+import { FcmService } from '../firebase/fcm.service';
+import {
+  SendNotificationMulticastRequest,
+  SendNotificationRequest,
+} from './dto/send.notification.dto';
 
 @Controller('notification')
 export class NotificationController {
-  constructor(private notificationService: NotificationService) {}
+  constructor(
+    private notificationService: NotificationService,
+    private fcmService: FcmService,
+  ) {}
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'fcm 단일 전송' })
+  @ApiTags('notification')
+  @ApiResponse({ status: 200 })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @Post('send')
+  async sendNotification(
+    @Body() sendNotificationRequest: SendNotificationRequest,
+  ) {
+    try {
+      return await this.fcmService.sendNotification(sendNotificationRequest);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'fcm 전송 (multiple)' })
+  @ApiTags('notification')
+  @ApiResponse({ status: 200 })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @Post('send/multicast')
+  async sendNotificationToMultipleUsers(
+    @Body() sendNotificationMulticastRequest: SendNotificationMulticastRequest,
+  ) {
+    try {
+      return await this.fcmService.sendNotificationToMultiple(
+        sendNotificationMulticastRequest,
+      );
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 
   @ApiBearerAuth()
   @ApiOperation({ summary: '알림 설정 조회' })

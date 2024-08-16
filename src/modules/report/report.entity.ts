@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne } from 'typeorm';
 import { ReportType, Status } from './constants';
 
 import { UserEntity } from '../user/user.entity';
@@ -20,12 +20,10 @@ export class ReportEntity extends AbstractEntity {
 
   @ApiProperty({ description: '신고를 한 사람', type: () => UserEntity })
   @ManyToOne(() => UserEntity)
-  @JoinColumn({ name: 'reporter_id' })
   reporter: UserEntity;
 
   @ApiProperty({ description: '신고를 당한 사람', type: () => UserEntity })
   @ManyToOne(() => UserEntity)
-  @JoinColumn({ name: 'reported_id' })
   reported: UserEntity;
 
   @ApiProperty({

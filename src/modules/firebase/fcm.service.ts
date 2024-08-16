@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
+import { chunkArray } from 'src/utils/helper';
+import {
+  SendNotificationMulticastRequest,
+  SendNotificationRequest,
+} from '../notification/dto/send.notification.dto';
 
 @Injectable()
 export class FcmService {
-  async sendNotification(
-    token: string,
-    title: string,
-    body: string,
-    data?: any,
-  ) {
+  async sendNotification({
+    token,
+    title,
+    body,
+    data,
+  }: SendNotificationRequest) {
     const message = {
       notification: {
         title,
@@ -26,40 +31,34 @@ export class FcmService {
     }
   }
 
-  // async sendNotificationToMultipleUsers(
-  //   userIds: string[],
-  //   title: string,
-  //   body: string,
-  //   data?: any,
-  // ) {
-  //   // 다수의 유저 데이터를 한번에 조회
-  //   const users = await this.usersRepository.findManyByIds(userIds);
+  async sendNotificationToMultiple({
+    tokens,
+    title,
+    body,
+    data,
+  }: SendNotificationMulticastRequest) {
+    const message: admin.messaging.MulticastMessage = {
+      notification: {
+        title,
+        body,
+      },
+      tokens,
+      data,
+    };
 
-  //   // 알림이 활성화된 유저들만 필터링
-  //   const tokens = users
-  //     .filter((user) => user.notificationsEnabled && user.fcmToken)
-  //     .map((user) => user.fcmToken);
+    const chunkedTokens = chunkArray(tokens, 500);
 
-  //   if (tokens.length === 0) {
-  //     console.log('No users to send notifications to.');
-  //     return;
-  //   }
+    const responses: admin.messaging.BatchResponse[] = [];
 
-  //   const message = {
-  //     notification: {
-  //       title,
-  //       body,
-  //     },
-  //     data,
-  //     tokens,
-  //   };
-
-  //   try {
-  //     // 다수의 유저에게 메시지 전송
-  //     const response = await admin.messaging().sendMulticast(message);
-  //     console.log('Successfully sent messages:', response);
-  //   } catch (error) {
-  //     console.error('Error sending messages:', error);
-  //   }
-  // }
+    try {
+      for (const chunk of chunkedTokens) {
+        message.tokens = chunk;
+        const response = await admin.messaging().sendEachForMulticast(message);
+        responses.push(response);
+      }
+      return responses;
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  }
 }
