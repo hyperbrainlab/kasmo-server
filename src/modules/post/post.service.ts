@@ -25,7 +25,19 @@ export class PostService {
   ) {}
 
   async findAll(query: PaginateQuery): Promise<Paginated<PostEntity>> {
-    const result = await paginate(query, this.postRepository, {
+    // const queryBuilder = this.postRepository
+    //   .createQueryBuilder('post')
+    //   .leftJoinAndSelect('post.user', 'user');
+
+    // .orderBy('post.createdAt', 'DESC')
+    // .addSelect([
+    //   'post.title',
+    //   'post.body',
+    //   'post.category',
+    //   'post.subCategory',
+    // ]);
+
+    return await paginate<PostEntity>(query, this.postRepository, {
       sortableColumns: ['createdAt', 'viewCount'],
       nullSort: 'last',
       defaultSortBy: [['createdAt', 'DESC']],
@@ -36,10 +48,8 @@ export class PostService {
         category: [FilterOperator.EQ],
         subCategory: [FilterOperator.EQ],
       },
-      // relations: ['user'],
+      relations: ['user'],
     });
-
-    return result;
   }
 
   async findOneById(postId: number): Promise<PostEntity | undefined> {

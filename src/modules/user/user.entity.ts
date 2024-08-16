@@ -114,6 +114,6 @@ export class UserEntity extends AbstractEntity {
   chatRoomsForRecipients: [ChatRoomEntity];
 
   @OneToOne(() => NotificationEntity, (notification) => notification.user)
-  @JoinColumn({ name: 'notification_id' })
+  @JoinColumn()
   notification: NotificationEntity;
 }

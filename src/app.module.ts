@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -32,7 +33,9 @@ import { ChatGateway } from './modules/chat/chat.gateway';
       database: process.env.DATABASE_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
+      namingStrategy: new SnakeNamingStrategy(),
     }),
+
     AuthModule,
     UserModule,
     ReportModule,

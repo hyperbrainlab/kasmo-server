@@ -1,4 +1,4 @@
-import { Entity, Column, JoinColumn } from 'typeorm';
+import { Entity, Column } from 'typeorm';
 
 import { AbstractEntity } from '../common/entity/abstract.entity';
 import { BusinessDirectoryCategories } from './constants';
@@ -19,7 +19,6 @@ export class BizDirectoryEntity extends AbstractEntity {
   owner: string;
 
   @Column({ type: 'text' })
-  @JoinColumn({ name: 'tel_no' })
   telNo: string;
 
   @Column({ type: 'text' })

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
 
 import { Categories, SubCategories } from './constants';
 
@@ -18,32 +18,31 @@ export class PostEntity extends AbstractEntity {
   category: Categories;
 
   @ApiProperty({ description: '서브 카테고리', enum: SubCategories })
-  @Column({ name: 'sub_category', nullable: true })
+  @Column({ nullable: true })
   subCategory: SubCategories;
 
   @ApiProperty({ description: '제목', type: String })
-  @Column({ name: 'title' })
+  @Column()
   title: string;
 
   @ApiProperty({ description: '본문', type: String })
-  @Column({ name: 'body' })
+  @Column({ type: 'longtext' })
   body: string;
 
   @ApiProperty({ description: '게시글 썸네일 이미지', type: String })
-  @Column({ name: 'thumnail_image_url', nullable: true })
+  @Column({ nullable: true })
   thumnailImageUrl: string;
 
   @ApiProperty({ description: '조회수', type: Number })
-  @Column({ name: 'view_count', default: 0 })
+  @Column({ default: 0 })
   viewCount: number;
 
   @ApiProperty({ description: '댓글 수', type: Number })
-  @Column({ name: 'comments_count', default: 0 })
+  @Column({ default: 0 })
   commentsCount: number;
 
   @ApiProperty({ description: '게시글 작성자', type: () => UserEntity })
-  @ManyToOne(() => UserEntity, (user) => user.posts, { nullable: false })
-  @JoinColumn({ name: 'user_id' })
+  @ManyToOne(() => UserEntity, (user) => user.posts)
   user: UserEntity;
 
   @ApiProperty({
