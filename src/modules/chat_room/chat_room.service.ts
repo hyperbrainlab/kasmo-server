@@ -76,7 +76,7 @@ export class ChatRoomService {
 
           if (lastMessageData) {
             room.lastMessage = lastMessageData.text;
-            room.lastMessageTime = new Date(lastMessageData.timestamp * 1000);
+            room.lastMessageTime = new Date(lastMessageData.timestamp);
           }
 
           return room;
