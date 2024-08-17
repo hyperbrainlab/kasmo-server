@@ -54,7 +54,7 @@ export class ChatService {
     return messages ? Object.values(messages) : [];
   }
 
-  async getLastMessageForRoom(roomId: number) {
+  async getLastMessageForRoom(roomId: number): Promise<Message | null> {
     const db = admin.database();
     const messagesRef = db.ref(`chatrooms/${roomId}/messages`);
 

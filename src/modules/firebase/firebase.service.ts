@@ -16,8 +16,8 @@ export class FirebaseService {
         ),
         databaseURL: this.configService.get<string>('FIREBASE_DB_URL'),
       });
-      this.db = admin.database();
     }
+    this.db = admin.database();
   }
 
   getDatabase() {

@@ -7,8 +7,8 @@ export const getUnreadMessagesCount = (
   const unreadCounts: { [roomId: number]: number } = {};
 
   messages.forEach((message) => {
-    if (!message.readBy[userId]) {
-      if (!unreadCounts[message.roomId]) {
+    if (!message.readBy?.[userId]) {
+      if (!unreadCounts?.[message.roomId]) {
         unreadCounts[message.roomId] = 0;
       }
       unreadCounts[message.roomId]++;

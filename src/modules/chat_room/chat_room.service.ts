@@ -63,20 +63,27 @@ export class ChatRoomService {
 
     const chatRoomsWithLastMessages = await Promise.all(
       chatRooms.map(async (room) => {
-        const messeges = await this.chatService.getMessages(`${room.id}`);
+        try {
+          const messages = await this.chatService.getMessages(`${room.id}`);
 
-        const unreadMessagesCount = getUnreadMessagesCount(messeges, userId);
+          const unreadMessagesCount = getUnreadMessagesCount(messages, userId);
 
-        room.unreadMessagesCount = unreadMessagesCount[room.id] || 0;
+          room.unreadMessagesCount = unreadMessagesCount?.[room.id] || 0;
 
-        const lastMessageData = await this.chatService.getLastMessageForRoom(
-          room.id,
-        );
-        if (lastMessageData) {
-          room.lastMessage = lastMessageData.text;
-          room.lastMessageTime = new Date(lastMessageData.timestamp * 1000);
+          const lastMessageData = await this.chatService.getLastMessageForRoom(
+            room.id,
+          );
+
+          if (lastMessageData) {
+            room.lastMessage = lastMessageData.text;
+            room.lastMessageTime = new Date(lastMessageData.timestamp * 1000);
+          }
+
+          return room;
+        } catch (error) {
+          console.error(error);
+          return room;
         }
-        return room;
       }),
     );
 
