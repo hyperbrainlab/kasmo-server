@@ -41,6 +41,7 @@ import { UpdateCommentRequest } from '../comment/dto/update.comment.dto';
 import { PostResponse } from './dto/retrieve.post.dto';
 import { DeleteResult } from 'typeorm';
 import { PostEntity } from './post.entity';
+import { ReplyPostRequest } from './dto/reply.post.dto';
 
 @Controller('post')
 export class PostController {
@@ -103,6 +104,24 @@ export class PostController {
       const userId = req.user.id;
 
       return this.postService.create({ ...createPostRequest, userId });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '답글 생성' })
+  @ApiTags('post')
+  @ApiResponse({ status: 200, type: PostResponse })
+  @Post('reply')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async replyPost(@Request() req, @Body() replyPostRequest: ReplyPostRequest) {
+    try {
+      const userId = req.user.id;
+
+      return this.postService.reply({ ...replyPostRequest, userId });
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

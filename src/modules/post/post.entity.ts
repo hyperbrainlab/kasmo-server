@@ -52,4 +52,17 @@ export class PostEntity extends AbstractEntity {
   })
   @OneToMany(() => CommentEntity, (comment) => comment.post)
   comments: CommentEntity[];
+
+  @ApiProperty({ description: '상위 게시글 정보', type: () => PostEntity })
+  @ManyToOne(() => PostEntity, (post) => post.childPosts, {
+    nullable: true,
+  })
+  parentPost: PostEntity;
+
+  @ApiProperty({
+    description: '하위 게시글 정보',
+    type: () => [PostEntity],
+  })
+  @OneToMany(() => PostEntity, (post) => post.parentPost)
+  childPosts: [PostEntity];
 }

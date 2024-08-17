@@ -13,6 +13,7 @@ import {
 import { CreatePostRequest } from './dto/create.post.dto';
 import { UpdatePostRequest } from './dto/update.post.dto';
 import { UserEntity } from '../user/user.entity';
+import { ReplyPostRequest } from './dto/reply.post.dto';
 
 @Injectable()
 export class PostService {
@@ -35,17 +36,23 @@ export class PostService {
     return parseInt(count.count, 10);
   }
 
-  async getUserByPostId(postId: number): Promise<UserEntity> {
+  async getRelationsByPostId(postId: number): Promise<PostEntity> {
     const post = await this.postRepository.findOne({
       where: { id: postId },
-      relations: ['user', 'comments'],
+      relations: [
+        'user',
+        'comments',
+        'parentPost',
+        'childPosts',
+        'childPosts.user',
+      ],
     });
 
     if (!post) {
       return null;
     }
 
-    return post.user;
+    return post;
   }
 
   async findAll(query: PaginateQuery): Promise<Paginated<PostEntity>> {
@@ -79,13 +86,16 @@ export class PostService {
       },
     );
 
-    const postsWithUser = await Promise.all(
+    const postsWithRelations = await Promise.all(
       paginatedPosts.data.map(async (post) => {
-        const user = await this.getUserByPostId(post.id);
+        const { user, parentPost, childPosts } =
+          await this.getRelationsByPostId(post.id);
         const commentsCount = await this.getCommentCountForPost(post.id);
 
         return {
           ...post,
+          parentPost,
+          childPosts,
           commentsCount,
           user,
         };
@@ -93,7 +103,7 @@ export class PostService {
     );
 
     return {
-      data: postsWithUser,
+      data: postsWithRelations,
       meta: paginatedPosts.meta,
       links: paginatedPosts.links,
     };
@@ -102,7 +112,7 @@ export class PostService {
   async findOneById(postId: number): Promise<PostEntity | undefined> {
     return await this.postRepository.findOne({
       where: { id: postId },
-      relations: ['user'],
+      relations: ['user', 'parentPost', 'childPosts'],
     });
   }
 
@@ -124,6 +134,32 @@ export class PostService {
     const post = await this.postRepository.create({
       ...createPostRequest,
       user,
+    });
+
+    return await this.postRepository.save(post);
+  }
+
+  async reply(replyPostRequest: ReplyPostRequest & { userId: number }) {
+    const user = await this.userRepository.findOneBy({
+      id: replyPostRequest.userId,
+    });
+
+    const parentPost = await this.postRepository.findOneBy({
+      id: replyPostRequest.parentPostId,
+    });
+
+    if (!parentPost) {
+      throw new Error(
+        `Parent post with id ${replyPostRequest.parentPostId} not found`,
+      );
+    }
+
+    const post = await this.postRepository.create({
+      ...replyPostRequest,
+      category: parentPost.category,
+      subCategory: parentPost.subCategory,
+      user,
+      parentPost,
     });
 
     return await this.postRepository.save(post);
