@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
+import { IsString } from 'class-validator';
 import { UserEntity } from '../user.entity';
 export class UpdateUserRequest {
   @ApiProperty({ description: '이메일 주소', type: String })

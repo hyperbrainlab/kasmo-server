@@ -36,9 +36,6 @@ export class NotificationController {
     private fcmService: FcmService,
   ) {}
 
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'fcm 단일 전송' })
-  @ApiTags('notification')
   @ApiResponse({ status: 200 })
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
@@ -53,9 +50,6 @@ export class NotificationController {
     }
   }
 
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'fcm 전송 (multiple)' })
-  @ApiTags('notification')
   @ApiResponse({ status: 200 })
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)

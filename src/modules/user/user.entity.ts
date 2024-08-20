@@ -57,6 +57,10 @@ export class UserEntity extends AbstractEntity {
   @Column({ default: false, name: 'is_biz' })
   isBiz: boolean;
 
+  @ApiProperty({ description: 'fcm 토큰', type: String })
+  @Column({ name: 'fcm_token', type: 'longtext' })
+  fcmToken: string;
+
   @ApiProperty({
     description: '유저가 작성한 게시글',
     type: () => [PostEntity],

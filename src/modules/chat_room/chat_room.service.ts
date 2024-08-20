@@ -51,15 +51,26 @@ export class ChatRoomService {
     });
   }
 
-  async getChatRoomsForUser(userId: number): Promise<ChatRoomEntity[]> {
-    const chatRooms = await this.chatRoomRepository
+  async getChatRoomsForUser(
+    userId: number,
+    search?: string,
+  ): Promise<ChatRoomEntity[]> {
+    const queryBuilder = this.chatRoomRepository
       .createQueryBuilder('chatroom')
       .where('chatroom.creator = :userId OR chatroom.recipient = :userId', {
         userId,
       })
       .leftJoinAndSelect('chatroom.creator', 'creator')
-      .leftJoinAndSelect('chatroom.recipient', 'recipient')
-      .getMany();
+      .leftJoinAndSelect('chatroom.recipient', 'recipient');
+
+    if (search) {
+      queryBuilder.andWhere(
+        '(recipient.name LIKE :searchQuery OR (chatroom.lastMessage IS NOT NULL AND chatroom.lastMessage LIKE :searchQuery))',
+        { searchQuery: `%${search}%` },
+      );
+    }
+
+    const chatRooms = await queryBuilder.getMany();
 
     const chatRoomsWithLastMessages = await Promise.all(
       chatRooms.map(async (room) => {

@@ -4,6 +4,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Patch,
   UseGuards,
   Request,
   InternalServerErrorException,
@@ -20,6 +21,7 @@ import { UserService } from '../user/user.service';
 import { LoginRequest } from './dto/login.request.dto';
 import { SignupRequest } from './dto/signup.dto';
 import { LoginResponse } from './dto/login.response.dto';
+import { UpdateFcmTokenRequest } from './dto/update.fcm_token.request.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -68,6 +70,19 @@ export class AuthController {
       const userId = req.user.id;
 
       return this.userService.delete(Number(userId));
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @ApiOperation({ summary: 'fcm 토큰 업데이트' })
+  @ApiTags('auth')
+  @Patch('fcm-token')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  async updateFcmToken(@Body() updateFcmTokenRequest: UpdateFcmTokenRequest) {
+    try {
+      return this.authService.updateFcmToken(updateFcmTokenRequest);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

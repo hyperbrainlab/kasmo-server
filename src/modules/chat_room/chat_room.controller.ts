@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Body,
+  Query,
   Request,
   Param,
   HttpCode,
@@ -90,11 +91,11 @@ export class ChatRoomController {
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @Get('room')
-  async getChatRooms(@Request() req) {
+  async getChatRooms(@Request() req, @Query('search') search?: string) {
     try {
       const userId = req.user.id;
 
-      return await this.chatRoomService.getChatRoomsForUser(userId);
+      return await this.chatRoomService.getChatRoomsForUser(userId, search);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

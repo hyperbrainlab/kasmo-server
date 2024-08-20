@@ -1,4 +1,4 @@
-import { IsBoolean, IsEnum } from 'class-validator';
+import { IsBoolean, IsEnum, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
@@ -59,4 +59,9 @@ export class SignupRequest {
   @Transform(({ value }) => value === 'true')
   @Expose({ name: 'is_biz' })
   isBiz: boolean;
+
+  @ApiProperty({ description: 'fcm 토큰', type: String })
+  @IsString()
+  @Expose({ name: 'fcm_token' })
+  fcmToken: string;
 }

@@ -50,6 +50,15 @@ export class UserService {
     return await this.userRepository.findOneBy({ id: userId });
   }
 
+  async updateFcmToken(
+    userId: number,
+    fcmToken: string,
+  ): Promise<UserEntity | undefined> {
+    await this.userRepository.update({ id: userId }, { fcmToken });
+
+    return await this.userRepository.findOneBy({ id: userId });
+  }
+
   async create(signupRequest: SignupRequest) {
     return await this.userRepository.save(signupRequest);
   }
