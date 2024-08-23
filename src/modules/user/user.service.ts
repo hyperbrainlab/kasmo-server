@@ -41,7 +41,10 @@ export class UserService {
   }
 
   async findOneByUid(uid: string): Promise<UserEntity | undefined> {
-    return await this.userRepository.findOneBy({ uid });
+    return await this.userRepository.findOne({
+      where: { uid },
+      withDeleted: true,
+    });
   }
 
   async update(userId: number, updateUserRequest: UpdateUserRequest) {
@@ -63,7 +66,11 @@ export class UserService {
     return await this.userRepository.save(signupRequest);
   }
 
-  async delete(userId: number) {
-    return await this.userRepository.delete(userId);
+  async inactivate(userId: number) {
+    await this.userRepository.softDelete(userId);
+  }
+
+  async restoreUser(userId: number) {
+    await this.userRepository.restore(userId);
   }
 }

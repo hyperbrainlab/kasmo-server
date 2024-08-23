@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, OneToMany, OneToOne } from 'typeorm';
+import { Entity, Column, OneToMany, OneToOne, DeleteDateColumn } from 'typeorm';
 import { PostEntity } from '../post/post.entity';
 import { CommentEntity } from '../comment/comment.entity';
 import { UserBlockEntity } from '../user_block/user_block.entity';
@@ -60,6 +60,13 @@ export class UserEntity extends AbstractEntity {
   @ApiProperty({ description: 'fcm 토큰', type: String })
   @Column({ name: 'fcm_token', type: 'longtext' })
   fcmToken: string;
+
+  @ApiProperty({ description: '탈퇴한 일자' })
+  @DeleteDateColumn({
+    type: 'timestamp',
+    name: 'deleted_at',
+  })
+  deletedAt: Date;
 
   @ApiProperty({
     description: '유저가 작성한 게시글',

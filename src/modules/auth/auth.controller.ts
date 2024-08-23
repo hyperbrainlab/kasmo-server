@@ -69,7 +69,7 @@ export class AuthController {
     try {
       const userId = req.user.id;
 
-      return this.userService.delete(Number(userId));
+      return this.userService.inactivate(Number(userId));
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

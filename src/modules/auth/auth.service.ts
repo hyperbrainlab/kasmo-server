@@ -13,11 +13,15 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(loginRequestDto: LoginRequest): Promise<LoginResponse> {
-    const user = await this.userService.findOneByUid(loginRequestDto.uid);
+  async login(loginRequest: LoginRequest): Promise<LoginResponse> {
+    const user = await this.userService.findOneByUid(loginRequest.uid);
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (user.deletedAt) {
+      throw new UnauthorizedException('User is deactivated');
     }
 
     const payload = { sub: user.uid, username: user.name, id: user.id };
