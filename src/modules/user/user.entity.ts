@@ -8,6 +8,7 @@ import { AbstractEntity } from '../common/entity/abstract.entity';
 import { Provider } from '../auth/constants';
 import { ChatRoomEntity } from '../chat_room/chat_room.entity';
 import { NotificationEntity } from '../notification/notification.entity';
+import { UserType } from './constants';
 
 @Entity('user')
 export class UserEntity extends AbstractEntity {
@@ -53,9 +54,11 @@ export class UserEntity extends AbstractEntity {
   @Column({ name: 'provider' })
   provider: string;
 
-  @ApiProperty({ description: '사업자 여부', default: false, type: Boolean })
-  @Column({ default: false, name: 'is_biz' })
-  isBiz: boolean;
+  @ApiProperty({
+    enum: Provider,
+  })
+  @Column({ name: 'provider', enum: UserType })
+  userType: string;
 
   @ApiProperty({ description: 'fcm 토큰', type: String })
   @Column({ name: 'fcm_token', type: 'longtext' })

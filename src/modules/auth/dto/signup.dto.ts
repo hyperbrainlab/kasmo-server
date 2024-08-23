@@ -1,11 +1,11 @@
-import { IsBoolean, IsEnum, IsString } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { IsEnum, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
 import { UserEntity } from 'src/modules/user/user.entity';
 
 import { Provider } from '../constants';
+import { UserType } from 'src/modules/user/constants';
 
 export class SignupRequest {
   @ApiProperty({ description: 'firebase uid', type: String })
@@ -54,11 +54,15 @@ export class SignupRequest {
   @Expose({ name: 'provider' })
   provider: string;
 
-  @ApiProperty({ description: '사업자 여부', default: false })
-  @IsBoolean()
-  @Transform(({ value }) => value === 'true')
-  @Expose({ name: 'is_biz' })
-  isBiz: boolean;
+  @ApiProperty({ description: '유저 타입', default: 1 })
+  @IsEnum(UserType, {
+    message: () => {
+      const values = Object.values(UserType).join(', ');
+      return `user type must be one of the following values: ${values}`;
+    },
+  })
+  @Expose({ name: 'user_type' })
+  userType: string;
 
   @ApiProperty({ description: 'fcm 토큰', type: String })
   @IsString()

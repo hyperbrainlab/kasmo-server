@@ -17,6 +17,12 @@ export class BannerEntity extends AbstractEntity {
   @Column({ type: 'text', nullable: true })
   description: string;
 
+  @Column({ type: 'timestamp', nullable: true })
+  startDate: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  endDate: Date;
+
   @Column({ type: 'integer' })
   order: number;
 }

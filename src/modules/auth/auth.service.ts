@@ -34,7 +34,13 @@ export class AuthService {
   }
 
   async signup(signupRequest: SignupRequest) {
-    await this.userService.create(signupRequest);
+    const user = await this.userService.findOneByUid(signupRequest.uid);
+
+    if (user) {
+      await this.userService.restoreUser(user.id);
+    } else {
+      await this.userService.create(signupRequest);
+    }
 
     return await this.login({ uid: signupRequest.uid });
   }

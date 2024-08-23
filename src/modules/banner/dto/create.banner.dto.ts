@@ -5,6 +5,7 @@ import {
   IsEmpty,
   IsEnum,
   IsOptional,
+  IsDate,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Categories, SubCategories } from 'src/modules/post/constants';
@@ -39,6 +40,16 @@ export class CreateBannerRequest {
   @IsString()
   @IsEmpty()
   description: string;
+
+  @ApiProperty({ description: '게시 시작일', required: false, nullable: true })
+  @IsDate()
+  @IsOptional()
+  startDate: Date;
+
+  @ApiProperty({ description: '게시 종료일', required: false, nullable: true })
+  @IsDate()
+  @IsOptional()
+  endDate: Date;
 
   @ApiProperty({ description: '순서', required: true, nullable: false })
   @IsNumber()

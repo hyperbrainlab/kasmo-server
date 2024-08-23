@@ -40,6 +40,10 @@ export class PostEntity extends AbstractEntity {
   @Column({ default: 0 })
   commentsCount: number;
 
+  @ApiProperty({ description: '광고 글', type: Boolean })
+  @Column({ default: false })
+  isAdvertise: boolean;
+
   @ApiProperty({ description: '게시글 작성자', type: () => UserEntity })
   @ManyToOne(() => UserEntity, (user) => user.posts)
   @JoinColumn()

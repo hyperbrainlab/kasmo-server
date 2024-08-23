@@ -52,9 +52,9 @@ export class UserProfileResponse {
   @Expose({ name: 'provider' })
   provider: UserEntity['provider'];
 
-  @ApiProperty({ description: '사업자 여부', default: false, type: Boolean })
-  @Expose({ name: 'is_biz' })
-  isBiz: UserEntity['isBiz'];
+  @ApiProperty({ description: '유저 타입' })
+  @Expose({ name: 'user_type' })
+  userType: UserEntity['userType'];
 
   @ApiProperty({
     description: '유저가 작성한 게시글',
