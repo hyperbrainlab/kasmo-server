@@ -1,6 +1,7 @@
 import { IsString, IsNotEmpty, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { BusinessDirectoryCategories } from '../constants';
+import { UserEntity } from 'src/modules/user/user.entity';
 
 export class UpdateBizDirectoryRequest {
   @ApiProperty({ description: '업소 이름', required: true, nullable: false })
@@ -18,10 +19,13 @@ export class UpdateBizDirectoryRequest {
   @IsNotEmpty()
   category: BusinessDirectoryCategories;
 
-  @ApiProperty({ description: '대표명', required: true, nullable: false })
-  @IsString()
-  @IsNotEmpty()
-  owner: string;
+  @ApiProperty({
+    description: '대표명',
+    type: () => UserEntity,
+    required: false,
+    nullable: true,
+  })
+  owner: UserEntity;
 
   @ApiProperty({ description: '전화번호', required: true, nullable: false })
   @IsString()

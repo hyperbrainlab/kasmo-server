@@ -18,11 +18,6 @@ export class CreateBizDirectoryRequest {
   @IsNotEmpty()
   category: BusinessDirectoryCategories;
 
-  @ApiProperty({ description: '대표명', required: true, nullable: false })
-  @IsString()
-  @IsNotEmpty()
-  owner: string;
-
   @ApiProperty({ description: '전화번호', required: true, nullable: false })
   @IsString()
   @IsNotEmpty()

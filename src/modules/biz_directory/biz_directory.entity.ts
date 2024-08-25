@@ -1,7 +1,8 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, JoinColumn, ManyToOne } from 'typeorm';
 
 import { AbstractEntity } from '../common/entity/abstract.entity';
 import { BusinessDirectoryCategories } from './constants';
+import { UserEntity } from '../user/user.entity';
 
 @Entity('biz_directory')
 export class BizDirectoryEntity extends AbstractEntity {
@@ -15,8 +16,9 @@ export class BizDirectoryEntity extends AbstractEntity {
   })
   category: BusinessDirectoryCategories;
 
-  @Column({ type: 'text' })
-  owner: string;
+  @ManyToOne(() => UserEntity, (user) => user.posts)
+  @JoinColumn()
+  owner: UserEntity;
 
   @Column({ type: 'text' })
   telNo: string;
