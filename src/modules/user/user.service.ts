@@ -1,17 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserEntity } from 'src/modules/user/user.entity';
 
 import { SignupRequest } from '../auth/dto/signup.dto';
 
 import { UpdateUserRequest } from './dto/update.user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
+import { PostEntity } from '../post/post.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(PostEntity)
+    private readonly postRepository: Repository<PostEntity>,
   ) {}
 
   async findUser(userId: number) {
@@ -67,6 +74,32 @@ export class UserService {
   }
 
   async inactivate(userId: number) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.deletedAt) {
+      throw new BadRequestException('User already deactivated');
+    }
+
+    const posts = await this.postRepository.find({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+    });
+
+    if (posts.length > 0) {
+      await Promise.all([
+        this.postRepository.delete({
+          id: In(posts.map((post) => post.id)),
+        }),
+      ]);
+    }
+
     await this.userRepository.softDelete(userId);
   }
 

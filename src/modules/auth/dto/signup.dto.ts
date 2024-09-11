@@ -54,7 +54,7 @@ export class SignupRequest {
   @Expose({ name: 'provider' })
   provider: string;
 
-  @ApiProperty({ description: '유저 타입', default: 1 })
+  @ApiProperty({ description: '유저 타입', default: UserType.USER })
   @IsEnum(UserType, {
     message: () => {
       const values = Object.values(UserType).join(', ');
@@ -62,7 +62,7 @@ export class SignupRequest {
     },
   })
   @Expose({ name: 'user_type' })
-  userType: string;
+  userType: UserType;
 
   @ApiProperty({ description: 'fcm 토큰', type: String })
   @IsString()

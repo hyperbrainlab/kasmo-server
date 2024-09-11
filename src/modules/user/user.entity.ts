@@ -55,10 +55,14 @@ export class UserEntity extends AbstractEntity {
   provider: string;
 
   @ApiProperty({
-    enum: Provider,
+    enum: UserType,
   })
-  @Column({ name: 'provider', enum: UserType })
-  userType: string;
+  @Column({ name: 'user_type' })
+  userType: UserType;
+
+  /** @deprecated */
+  @Column({ name: 'is_biz', type: 'boolean' })
+  isBiz: boolean;
 
   @ApiProperty({ description: 'fcm 토큰', type: String })
   @Column({ name: 'fcm_token', type: 'longtext' })
