@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsEmpty } from 'class-validator';
 import { Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserEntity } from 'src/modules/user/user.entity';
@@ -43,4 +43,13 @@ export class ChatRoomResponse {
   @IsNotEmpty()
   @Expose({ name: 'unread_messages_count' })
   unreadMessagesCount: number;
+
+  @ApiProperty({
+    description: '검색 텍스트',
+    required: false,
+  })
+  @IsString()
+  @IsEmpty()
+  @Expose({ name: 'search_text' })
+  searchText: string;
 }

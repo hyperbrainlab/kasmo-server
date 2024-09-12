@@ -19,4 +19,7 @@ export class ChatRoomEntity extends AbstractEntity {
 
   @Column({ type: 'integer', nullable: true })
   unreadMessagesCount: number;
+
+  @Column({ type: 'text', nullable: true })
+  searchText: string;
 }

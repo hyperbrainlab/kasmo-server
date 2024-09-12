@@ -90,6 +90,8 @@ export class ChatRoomService {
             room.lastMessageTime = new Date(lastMessageData.timestamp);
           }
 
+          room.searchText = room.lastMessage || room.recipient.name || '';
+
           return room;
         } catch (error) {
           console.error(error);
