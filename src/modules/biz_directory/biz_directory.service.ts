@@ -23,6 +23,10 @@ export class BizDirectoryService {
     private readonly bizDirectoryRepository: Repository<BizDirectoryEntity>,
   ) {}
 
+  async bulkDelete(ids: number[]): Promise<void> {
+    await this.bizDirectoryRepository.delete(ids);
+  }
+
   async processCsvFile(
     fileBuffer: Buffer,
   ): Promise<{ processed: number; failed: number }> {

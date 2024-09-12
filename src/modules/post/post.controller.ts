@@ -46,6 +46,7 @@ import { PostResponse } from './dto/retrieve.post.dto';
 import { DeleteResult } from 'typeorm';
 import { PostEntity } from './post.entity';
 import { ReplyPostRequest } from './dto/reply.post.dto';
+import { BulkDeleteDto } from './dto/bulk.delete.post.dto';
 
 @Controller('post')
 export class PostController {
@@ -66,6 +67,15 @@ export class PostController {
     } catch {
       throw new InternalServerErrorException();
     }
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete('bulk-delete')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Bulk delete posts' })
+  @ApiResponse({ status: 204, description: 'Posts successfully deleted' })
+  async bulkDeletePosts(@Body() bulkDeleteDto: BulkDeleteDto) {
+    await this.postService.bulkDelete(bulkDeleteDto.ids);
   }
 
   @ApiOperation({ summary: '게시글 목록 조회' })

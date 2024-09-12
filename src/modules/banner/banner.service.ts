@@ -14,6 +14,10 @@ export class BannerService {
     private readonly bannerRepository: Repository<BannerEntity>,
   ) {}
 
+  async bulkDelete(ids: number[]): Promise<void> {
+    await this.bannerRepository.delete(ids);
+  }
+
   async createBanner(
     createBannerRequest: CreateBannerRequest,
   ): Promise<BannerResponse> {

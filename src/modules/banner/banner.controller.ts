@@ -27,6 +27,7 @@ import { CreateBannerRequest } from './dto/create.banner.dto';
 import { UpdateBannerRequest } from './dto/update.banner.dto';
 import { BannerResponse } from './dto/retrieve.banner.dto';
 import { DeleteResult } from 'typeorm';
+import { BulkDeleteDto } from './dto/bulk.delete.post.dto';
 
 @Controller('banner')
 export class BannerController {
@@ -45,6 +46,15 @@ export class BannerController {
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete('bulk-delete')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Bulk delete banners' })
+  @ApiResponse({ status: 204, description: 'Banners successfully deleted' })
+  async bulkDeletePosts(@Body() bulkDeleteDto: BulkDeleteDto) {
+    await this.bannerService.bulkDelete(bulkDeleteDto.ids);
   }
 
   @ApiBearerAuth()

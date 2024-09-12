@@ -26,6 +26,10 @@ export class PostService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
+  async bulkDelete(ids: number[]): Promise<void> {
+    await this.postRepository.delete(ids);
+  }
+
   async processCsvFile(
     fileBuffer: Buffer,
   ): Promise<{ processed: number; failed: number }> {

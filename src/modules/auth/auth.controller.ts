@@ -47,6 +47,7 @@ export class AuthController {
     }
   }
 
+  @Post('admin/login')
   async adminLogin(
     @Body() adminLoginRequest: AdminLoginRequest,
   ): Promise<LoginResponse> {

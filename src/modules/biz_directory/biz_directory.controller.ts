@@ -31,6 +31,7 @@ import { BizDirectoryResponse } from './dto/retrieve.biz_directory.dto';
 import { DeleteResult } from 'typeorm';
 import { Paginate, PaginatedSwaggerDocs, PaginateQuery } from 'nestjs-paginate';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { BulkDeleteDto } from './dto/bulk.delete.biz_directory.dto';
 
 @Controller('biz')
 export class BizDirectoryController {
@@ -48,6 +49,18 @@ export class BizDirectoryController {
     } catch {
       throw new InternalServerErrorException();
     }
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete('bulk-delete')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Bulk delete biz' })
+  @ApiResponse({
+    status: 204,
+    description: 'Biz directories successfully deleted',
+  })
+  async bulkDeletePosts(@Body() bulkDeleteDto: BulkDeleteDto) {
+    await this.bizDirectoryService.bulkDelete(bulkDeleteDto.ids);
   }
 
   @ApiBearerAuth()
