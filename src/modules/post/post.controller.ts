@@ -14,6 +14,8 @@ import {
   UsePipes,
   ParseIntPipe,
   Request,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 
 import {
@@ -29,6 +31,8 @@ import {
   PaginatedSwaggerDocs,
   Paginated,
 } from 'nestjs-paginate';
+
+import { FileInterceptor } from '@nestjs/platform-express';
 
 import { AuthGuard } from '../auth/auth.guard';
 
@@ -49,6 +53,20 @@ export class PostController {
     private postService: PostService,
     private commentService: CommentService,
   ) {}
+
+  @UseGuards(AuthGuard)
+  @Post('bulk-upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async bulkUploadBizDirectory(@UploadedFile() file: Express.Multer.File) {
+    try {
+      if (!file) {
+        throw new Error('No file uploaded');
+      }
+      return await this.postService.processCsvFile(file.buffer);
+    } catch {
+      throw new InternalServerErrorException();
+    }
+  }
 
   @ApiOperation({ summary: '게시글 목록 조회' })
   @ApiTags('post')

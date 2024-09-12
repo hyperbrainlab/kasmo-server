@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { parse } from 'csv-parse';
 
 import {
   FilterOperator,
@@ -21,6 +22,43 @@ export class BizDirectoryService {
     @InjectRepository(BizDirectoryEntity)
     private readonly bizDirectoryRepository: Repository<BizDirectoryEntity>,
   ) {}
+
+  async processCsvFile(
+    fileBuffer: Buffer,
+  ): Promise<{ processed: number; failed: number }> {
+    return new Promise((resolve, reject) => {
+      const results: CreateBizDirectoryRequest[] = [];
+      let processed = 0;
+      let failed = 0;
+
+      parse(fileBuffer, {
+        columns: true,
+        skip_empty_lines: true,
+      })
+        .on('data', (data) => {
+          results.push(data);
+        })
+        .on('error', (error) => {
+          reject(
+            new BadRequestException(
+              'CSV 파싱 중 오류가 발생했습니다: ' + error.message,
+            ),
+          );
+        })
+        .on('end', async () => {
+          for (const row of results) {
+            try {
+              await this.createBizDirectory(row);
+              processed++;
+            } catch (error) {
+              console.error('데이터 처리 중 오류:', error);
+              failed++;
+            }
+          }
+          resolve({ processed, failed });
+        });
+    });
+  }
 
   async createBizDirectory(
     createBizDirectoryRequest: CreateBizDirectoryRequest,

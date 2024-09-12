@@ -1,8 +1,9 @@
 import { PostEntity } from './post.entity';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { parse } from 'csv-parse';
 import {
   FilterOperator,
   PaginateQuery,
@@ -24,6 +25,43 @@ export class PostService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
+
+  async processCsvFile(
+    fileBuffer: Buffer,
+  ): Promise<{ processed: number; failed: number }> {
+    return new Promise((resolve, reject) => {
+      const results: (CreatePostRequest & { userId: number })[] = [];
+      let processed = 0;
+      let failed = 0;
+
+      parse(fileBuffer, {
+        columns: true,
+        skip_empty_lines: true,
+      })
+        .on('data', (data) => {
+          results.push(data);
+        })
+        .on('error', (error) => {
+          reject(
+            new BadRequestException(
+              'CSV 파싱 중 오류가 발생했습니다: ' + error.message,
+            ),
+          );
+        })
+        .on('end', async () => {
+          for (const row of results) {
+            try {
+              await this.create(row);
+              processed++;
+            } catch (error) {
+              console.error('데이터 처리 중 오류:', error);
+              failed++;
+            }
+          }
+          resolve({ processed, failed });
+        });
+    });
+  }
 
   async getCommentCountForPost(postId: number): Promise<number> {
     const count = await this.postRepository

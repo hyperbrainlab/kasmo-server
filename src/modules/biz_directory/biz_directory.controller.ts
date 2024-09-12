@@ -11,6 +11,8 @@ import {
   UseGuards,
   InternalServerErrorException,
   ParseIntPipe,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 
 import {
@@ -28,10 +30,25 @@ import { UpdateBizDirectoryRequest } from './dto/update.biz_directory.dto';
 import { BizDirectoryResponse } from './dto/retrieve.biz_directory.dto';
 import { DeleteResult } from 'typeorm';
 import { Paginate, PaginatedSwaggerDocs, PaginateQuery } from 'nestjs-paginate';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('biz')
 export class BizDirectoryController {
   constructor(private bizDirectoryService: BizDirectoryService) {}
+
+  @UseGuards(AuthGuard)
+  @Post('bulk-upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async bulkUploadBizDirectory(@UploadedFile() file: Express.Multer.File) {
+    try {
+      if (!file) {
+        throw new Error('No file uploaded');
+      }
+      return await this.bizDirectoryService.processCsvFile(file.buffer);
+    } catch {
+      throw new InternalServerErrorException();
+    }
+  }
 
   @ApiBearerAuth()
   @ApiOperation({ summary: '업소록 목록 조회' })

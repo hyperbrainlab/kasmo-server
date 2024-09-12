@@ -77,6 +77,22 @@ export class UserEntity extends AbstractEntity {
   deletedAt: Date;
 
   @ApiProperty({
+    description: '관리자 로그인 ID',
+    required: false,
+    type: String,
+  })
+  @Column({ nullable: true, name: 'user_id', unique: true })
+  userId: string;
+
+  @ApiProperty({
+    description: '관리자 비밀번호 (해시됨)',
+    required: false,
+    type: String,
+  })
+  @Column({ nullable: true, name: 'password' })
+  password: string;
+
+  @ApiProperty({
     description: '유저가 작성한 게시글',
     type: () => [PostEntity],
   })

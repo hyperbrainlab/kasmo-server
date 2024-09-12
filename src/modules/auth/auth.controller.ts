@@ -22,6 +22,7 @@ import { LoginRequest } from './dto/login.request.dto';
 import { SignupRequest } from './dto/signup.dto';
 import { LoginResponse } from './dto/login.response.dto';
 import { UpdateFcmTokenRequest } from './dto/update.fcm_token.request.dto';
+import { AdminLoginRequest } from './dto/admin.login.request.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -39,6 +40,18 @@ export class AuthController {
   async login(@Body() loginRequest: LoginRequest): Promise<LoginResponse> {
     try {
       const response = await this.authService.login(loginRequest);
+
+      return response;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async adminLogin(
+    @Body() adminLoginRequest: AdminLoginRequest,
+  ): Promise<LoginResponse> {
+    try {
+      const response = await this.authService.adminLogin(adminLoginRequest);
 
       return response;
     } catch (error) {
