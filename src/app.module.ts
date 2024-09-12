@@ -19,6 +19,8 @@ import { BannerModule } from './modules/banner/banner.module';
 import { NotificationModule } from './modules/notification/notification.module';
 
 import { ChatGateway } from './modules/chat/chat.gateway';
+import { FirebaseModule } from './modules/firebase/firebase.module';
+import { FcmModule } from './modules/firebase/fcm.module';
 
 @Module({
   imports: [
@@ -35,7 +37,8 @@ import { ChatGateway } from './modules/chat/chat.gateway';
       synchronize: true,
       namingStrategy: new SnakeNamingStrategy(),
     }),
-
+    FirebaseModule,
+    FcmModule,
     AuthModule,
     UserModule,
     ReportModule,

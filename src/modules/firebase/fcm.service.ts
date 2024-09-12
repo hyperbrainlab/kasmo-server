@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
+import { FirebaseService } from './firebase.service';
 import { chunkArray } from 'src/utils/helper';
 import {
   SendNotificationMulticastRequest,
@@ -8,6 +9,8 @@ import {
 
 @Injectable()
 export class FcmService {
+  constructor(private firebaseService: FirebaseService) {}
+
   async sendNotification({
     token,
     title,
@@ -24,7 +27,7 @@ export class FcmService {
     };
 
     try {
-      const response = await admin.messaging().send(message);
+      const response = await this.firebaseService.getMessaging().send(message);
       console.log('Successfully sent message:', response);
     } catch (error) {
       console.error('Error sending message:', error);

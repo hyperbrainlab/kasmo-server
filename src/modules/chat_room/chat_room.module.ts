@@ -7,9 +7,15 @@ import { ChatRoomService } from './chat_room.service';
 import { ChatRoomController } from './chat_room.controller';
 import { ChatService } from '../chat/chat.service';
 import { FirebaseService } from '../firebase/firebase.service';
+import { FcmModule } from '../firebase/fcm.module';
+import { FirebaseModule } from '../firebase/firebase.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ChatRoomEntity, UserEntity])],
+  imports: [
+    TypeOrmModule.forFeature([ChatRoomEntity, UserEntity]),
+    FcmModule,
+    FirebaseModule,
+  ],
   providers: [ChatService, FirebaseService, ChatRoomService],
   controllers: [ChatRoomController],
   exports: [ChatRoomService],
