@@ -52,7 +52,7 @@ export class SignupRequest {
     },
   })
   @Expose({ name: 'provider' })
-  provider: string;
+  provider: Provider;
 
   @ApiProperty({ description: '유저 타입', default: UserType.USER })
   @IsEnum(UserType, {

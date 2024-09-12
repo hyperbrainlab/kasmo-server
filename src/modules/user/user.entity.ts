@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, OneToMany, OneToOne, DeleteDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  OneToMany,
+  OneToOne,
+  DeleteDateColumn,
+  JoinColumn,
+} from 'typeorm';
 import { PostEntity } from '../post/post.entity';
 import { CommentEntity } from '../comment/comment.entity';
 import { UserBlockEntity } from '../user_block/user_block.entity';
@@ -17,9 +24,7 @@ export class UserEntity extends AbstractEntity {
   uid: string;
 
   @ApiProperty({ description: '이메일 주소', type: String })
-  @Column({
-    name: 'email',
-  })
+  @Column({ name: 'email' })
   email: string;
 
   @ApiProperty({
@@ -48,15 +53,11 @@ export class UserEntity extends AbstractEntity {
   @Column({ name: 'phone_no' })
   phoneNo: string;
 
-  @ApiProperty({
-    enum: Provider,
-  })
+  @ApiProperty({ enum: Provider })
   @Column({ name: 'provider' })
-  provider: string;
+  provider: Provider;
 
-  @ApiProperty({
-    enum: UserType,
-  })
+  @ApiProperty({ enum: UserType })
   @Column({ name: 'user_type' })
   userType: UserType;
 
@@ -79,58 +80,73 @@ export class UserEntity extends AbstractEntity {
     description: '유저가 작성한 게시글',
     type: () => [PostEntity],
   })
-  @OneToMany(() => PostEntity, (post) => post.user)
-  posts: [PostEntity];
+  @OneToMany(() => PostEntity, (post) => post.user, { cascade: true })
+  posts: PostEntity[];
 
   @ApiProperty({
     description: '유저가 작성한 댓글',
     type: () => [CommentEntity],
   })
-  @OneToMany(() => CommentEntity, (comment) => comment.user)
+  @OneToMany(() => CommentEntity, (comment) => comment.user, { cascade: true })
   comments: [CommentEntity];
 
   @ApiProperty({
     description: '유저가 행한 블록',
     type: () => [UserBlockEntity],
   })
-  @OneToMany(() => UserBlockEntity, (userBlock) => userBlock.blocker)
+  @OneToMany(() => UserBlockEntity, (userBlock) => userBlock.blocker, {
+    cascade: true,
+  })
   blocksMade: [UserBlockEntity];
 
   @ApiProperty({
     description: '유저가 당한 블록',
     type: () => [UserBlockEntity],
   })
-  @OneToMany(() => UserBlockEntity, (userBlock) => userBlock.blocked)
+  @OneToMany(() => UserBlockEntity, (userBlock) => userBlock.blocked, {
+    cascade: true,
+  })
   blocksReceived: [UserBlockEntity];
 
   @ApiProperty({
     description: '유저가 행한 신고',
     type: () => [ReportEntity],
   })
-  @OneToMany(() => ReportEntity, (report) => report.reporter)
+  @OneToMany(() => ReportEntity, (report) => report.reporter, { cascade: true })
   reportsMade: [ReportEntity];
 
   @ApiProperty({
     description: '유저가 당한 신고',
     type: () => [ReportEntity],
   })
-  @OneToMany(() => ReportEntity, (report) => report.reported)
+  @OneToMany(() => ReportEntity, (report) => report.reported, { cascade: true })
   reportsReceived: [ReportEntity];
 
   @ApiProperty({
-    description: '',
+    description: '생성한 채팅방',
     type: () => [ChatRoomEntity],
   })
-  @OneToMany(() => ChatRoomEntity, (chatRoom) => chatRoom.creator)
+  @OneToMany(() => ChatRoomEntity, (chatRoom) => chatRoom.creator, {
+    cascade: true,
+  })
   createdChatRooms: [ChatRoomEntity];
 
   @ApiProperty({
-    description: '',
+    description: '참여한 채팅방',
     type: () => [ChatRoomEntity],
   })
-  @OneToMany(() => ChatRoomEntity, (chatRoom) => chatRoom.recipient)
+  @OneToMany(() => ChatRoomEntity, (chatRoom) => chatRoom.recipient, {
+    cascade: true,
+  })
   chatRoomsForRecipients: [ChatRoomEntity];
 
-  @OneToOne(() => NotificationEntity, (notification) => notification.user)
+  @ApiProperty({
+    description: '사용자 알림 설정',
+    type: () => NotificationEntity,
+  })
+  @OneToOne(() => NotificationEntity, (notification) => notification.user, {
+    cascade: true,
+  })
+  @JoinColumn()
   notification: NotificationEntity;
 }

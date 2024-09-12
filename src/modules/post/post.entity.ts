@@ -45,7 +45,7 @@ export class PostEntity extends AbstractEntity {
   isAdvertise: boolean;
 
   @ApiProperty({ description: '게시글 작성자', type: () => UserEntity })
-  @ManyToOne(() => UserEntity, (user) => user.posts)
+  @ManyToOne(() => UserEntity, (user) => user.posts, { onDelete: 'CASCADE' })
   @JoinColumn()
   user: UserEntity;
 
@@ -54,12 +54,13 @@ export class PostEntity extends AbstractEntity {
     isArray: true,
     type: () => CommentEntity,
   })
-  @OneToMany(() => CommentEntity, (comment) => comment.post)
+  @OneToMany(() => CommentEntity, (comment) => comment.post, { cascade: true })
   comments: CommentEntity[];
 
   @ApiProperty({ description: '상위 게시글 정보', type: () => PostEntity })
   @ManyToOne(() => PostEntity, (post) => post.childPosts, {
     nullable: true,
+    onDelete: 'SET NULL',
   })
   parentPost: PostEntity;
 
@@ -67,6 +68,6 @@ export class PostEntity extends AbstractEntity {
     description: '하위 게시글 정보',
     type: () => [PostEntity],
   })
-  @OneToMany(() => PostEntity, (post) => post.parentPost)
+  @OneToMany(() => PostEntity, (post) => post.parentPost, { cascade: true })
   childPosts: [PostEntity];
 }

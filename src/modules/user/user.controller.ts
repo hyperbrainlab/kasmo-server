@@ -26,6 +26,7 @@ import { AuthGuard } from '../auth/auth.guard';
 
 import { UserProfileResponse } from './dto/retrieve.user.dto';
 import { UpdateUserRequest } from './dto/update.user.dto';
+import { plainToClass } from 'class-transformer';
 
 @Controller('user')
 export class UserController {
@@ -49,7 +50,9 @@ export class UserController {
         throw new NotFoundException('User not found');
       }
 
-      return user;
+      return plainToClass(UserProfileResponse, user, {
+        excludeExtraneousValues: true,
+      });
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -94,7 +97,9 @@ export class UserController {
         throw new NotFoundException('User not found');
       }
 
-      return user;
+      return plainToClass(UserProfileResponse, user, {
+        excludeExtraneousValues: true,
+      });
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
