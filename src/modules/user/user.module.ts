@@ -5,9 +5,10 @@ import { UserEntity } from './user.entity';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { PostEntity } from '../post/post.entity';
+import { CommentEntity } from '../comment/comment.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity, PostEntity])],
+  imports: [TypeOrmModule.forFeature([UserEntity, PostEntity, CommentEntity])],
   providers: [UserService],
   controllers: [UserController],
   exports: [UserService],

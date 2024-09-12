@@ -11,6 +11,7 @@ import { UpdateUserRequest } from './dto/update.user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { PostEntity } from '../post/post.entity';
+import { CommentEntity } from '../comment/comment.entity';
 
 @Injectable()
 export class UserService {
@@ -19,6 +20,8 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(PostEntity)
     private readonly postRepository: Repository<PostEntity>,
+    @InjectRepository(CommentEntity)
+    private readonly commentRepository: Repository<CommentEntity>,
   ) {}
 
   async findUser(userId: number) {
@@ -34,10 +37,13 @@ export class UserService {
       ],
     });
 
+    const visitsCount = user.posts.reduce((acc, post) => {
+      return acc + post.viewCount;
+    }, 0);
+
     return {
       ...user,
-      // TODO:: 방문자 수 추가
-      visitsCount: 0,
+      visitsCount,
       postsCount: user.posts.length,
       commentsCount: user.comments.length,
     };
@@ -82,6 +88,22 @@ export class UserService {
 
     if (user.deletedAt) {
       throw new BadRequestException('User already deactivated');
+    }
+
+    const comments = await this.commentRepository.find({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+    });
+
+    if (comments.length > 0) {
+      await Promise.all([
+        this.commentRepository.delete({
+          id: In(comments.map((comment) => comment.id)),
+        }),
+      ]);
     }
 
     const posts = await this.postRepository.find({
