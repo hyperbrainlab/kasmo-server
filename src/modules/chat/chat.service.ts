@@ -99,4 +99,22 @@ export class ChatService {
       return null;
     }
   }
+
+  async getUnreadMessagesCount(
+    roomId: number,
+    userId: number,
+  ): Promise<number> {
+    const messagesRef = this.firebaseService
+      .getDatabase()
+      .ref(`chatrooms/${roomId}/messages`);
+
+    const snapshot = await messagesRef
+      .orderByChild(`readBy/${userId}`)
+      .equalTo(false)
+      .once('value');
+
+    const unreadMessages = snapshot.val();
+
+    return unreadMessages ? Object.keys(unreadMessages).length : 0;
+  }
 }

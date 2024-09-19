@@ -1,7 +1,9 @@
 import { UserBlockService } from './user_block.service';
 import {
   Controller,
+  Get,
   Post,
+  Delete,
   HttpCode,
   HttpStatus,
   UseGuards,
@@ -16,6 +18,7 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiTags,
+  ApiParam,
   ApiResponse,
 } from '@nestjs/swagger';
 
@@ -41,6 +44,61 @@ export class UserBlockController {
         blockerUserId,
         blockedUserId,
       });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '유저 블락 해제하기' })
+  @ApiTags('user_block')
+  @ApiResponse({ status: 200 })
+  @Delete(':blockedUserId')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async unblock(@Request() req, @Param('blockedUserId') blockedUserId: number) {
+    try {
+      const blockerUserId = req.user.id;
+
+      return await this.userBlockService.unblock({
+        blockerUserId,
+        blockedUserId,
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @ApiOperation({ summary: '유저 블락 상태 확인하기' })
+  @ApiResponse({ status: 200 })
+  @ApiParam({ name: 'blockedUserId', type: 'number' })
+  @Get('status/:blockedUserId')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async getBlockStatus(
+    @Request() req,
+    @Param('blockedUserId') blockedUserId: number,
+  ) {
+    try {
+      const blockerUserId = req.user.id;
+      return await this.userBlockService.getBlockStatus({
+        blockerUserId,
+        blockedUserId,
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @ApiOperation({ summary: '블락한 유저 목록 가져오기' })
+  @ApiResponse({ status: 200 })
+  @Get('list')
+  @HttpCode(HttpStatus.OK)
+  async listBlockedUsers(@Request() req) {
+    try {
+      const userId = req.user.id;
+      return await this.userBlockService.listBlockedUsers(userId);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

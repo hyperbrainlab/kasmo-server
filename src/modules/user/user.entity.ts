@@ -77,6 +77,13 @@ export class UserEntity extends AbstractEntity {
   })
   deletedAt: Date;
 
+  @ApiProperty({ description: '닉네임 변경 일자' })
+  @DeleteDateColumn({
+    type: 'timestamp',
+    name: 'name_changed_at',
+  })
+  nameChangedAt: Date;
+
   @ApiProperty({
     description: '관리자 로그인 ID',
     required: false,

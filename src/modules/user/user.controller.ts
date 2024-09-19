@@ -2,8 +2,8 @@ import { UserService } from './user.service';
 import {
   Controller,
   Get,
-  Put,
   Patch,
+  Put,
   Body,
   Param,
   HttpCode,
@@ -77,6 +77,26 @@ export class UserController {
         Number(userId),
         updateUserRequest,
       );
+
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '로그인 한 닉네임 업데이트' })
+  @ApiTags('user')
+  @ApiResponse({ status: 200, type: UserProfileResponse })
+  @Patch('profile/name')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @UsePipes(new ValidationPipe({ transform: false }))
+  async updateName(@Request() req, @Body('name') name: string) {
+    try {
+      const userId = req.user.id;
+
+      const user = await this.userService.updateName(Number(userId), name);
 
       return user;
     } catch (error) {

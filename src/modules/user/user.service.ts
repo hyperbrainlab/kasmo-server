@@ -70,7 +70,74 @@ export class UserService {
   }
 
   async update(userId: number, updateUserRequest: UpdateUserRequest) {
-    await this.userRepository.update({ id: userId }, updateUserRequest);
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!user) {
+      throw new NotFoundException('사용자를 찾을 수 없습니다.');
+    }
+
+    let nameChangedAt = undefined;
+
+    if ('name' in updateUserRequest && updateUserRequest.name !== user.name) {
+      const currentDate = new Date();
+      const thirtyDaysAgo = new Date(
+        currentDate.getTime() - 30 * 24 * 60 * 60 * 1000,
+      );
+
+      if (user.nameChangedAt && user.nameChangedAt > thirtyDaysAgo) {
+        const daysLeft = Math.ceil(
+          (user.nameChangedAt.getTime() - thirtyDaysAgo.getTime()) /
+            (1000 * 60 * 60 * 24),
+        );
+        throw new BadRequestException(
+          `닉네임 변경은 30일에 한 번만 가능합니다. ${daysLeft}일 후에 다시 시도해주세요.`,
+        );
+      }
+
+      nameChangedAt = currentDate;
+    }
+
+    // 모든 경우에 대해 업데이트 수행
+    await this.userRepository.update(
+      { id: userId },
+      {
+        ...updateUserRequest,
+        ...(nameChangedAt && { nameChangedAt }),
+      },
+    );
+
+    return await this.userRepository.findOneBy({ id: userId });
+  }
+
+  async updateName(userId: number, name: string) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!user) {
+      throw new NotFoundException('사용자를 찾을 수 없습니다.');
+    }
+
+    const currentDate = new Date();
+    const thirtyDaysAgo = new Date(
+      currentDate.getTime() - 30 * 24 * 60 * 60 * 1000,
+    );
+
+    if (user.nameChangedAt && user.nameChangedAt > thirtyDaysAgo) {
+      const daysLeft = Math.ceil(
+        (user.nameChangedAt.getTime() - thirtyDaysAgo.getTime()) /
+          (1000 * 60 * 60 * 24),
+      );
+      throw new BadRequestException(
+        `닉네임 변경은 30일에 한 번만 가능합니다. ${daysLeft}일 후에 다시 시도해주세요.`,
+      );
+    }
+
+    await this.userRepository.update(
+      { id: userId },
+      {
+        name,
+        nameChangedAt: currentDate,
+      },
+    );
 
     return await this.userRepository.findOneBy({ id: userId });
   }

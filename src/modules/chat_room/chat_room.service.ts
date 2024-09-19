@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { ChatRoomEntity } from './chat_room.entity';
 import { UserEntity } from '../user/user.entity';
 import { ChatService } from '../chat/chat.service';
-import { getUnreadMessagesCount } from '../chat/utils';
 
 @Injectable()
 export class ChatRoomService {
@@ -55,51 +54,74 @@ export class ChatRoomService {
     userId: number,
     search?: string,
   ): Promise<ChatRoomEntity[]> {
-    const queryBuilder = this.chatRoomRepository
+    const chatRooms = await this.chatRoomRepository
       .createQueryBuilder('chatroom')
       .where('chatroom.creator = :userId OR chatroom.recipient = :userId', {
         userId,
       })
       .leftJoinAndSelect('chatroom.creator', 'creator')
-      .leftJoinAndSelect('chatroom.recipient', 'recipient');
+      .leftJoinAndSelect('chatroom.recipient', 'recipient')
+      .getMany();
 
-    if (search) {
-      queryBuilder.andWhere(
-        '(recipient.name LIKE :searchQuery OR (chatroom.lastMessage IS NOT NULL AND chatroom.lastMessage LIKE :searchQuery))',
-        { searchQuery: `%${search}%` },
-      );
-    }
-
-    const chatRooms = await queryBuilder.getMany();
-
-    const chatRoomsWithLastMessages = await Promise.all(
-      chatRooms.map(async (room) => {
-        try {
-          const messages = await this.chatService.getMessages(`${room.id}`);
-
-          const unreadMessagesCount = getUnreadMessagesCount(messages, userId);
-
-          room.unreadMessagesCount = unreadMessagesCount?.[room.id] || 0;
-
-          const lastMessageData = await this.chatService.getLastMessageForRoom(
-            room.id,
-          );
-
-          if (lastMessageData) {
-            room.lastMessage = lastMessageData.text;
-            room.lastMessageTime = new Date(lastMessageData.timestamp);
-          }
-
-          room.searchText = room?.lastMessage || room?.recipient?.name || '';
-
-          return room;
-        } catch (error) {
-          console.error(error);
-          return room;
-        }
-      }),
+    const chatRoomsWithDetails = await Promise.all(
+      chatRooms.map((room) => this.enrichChatRoomWithDetails(room, userId)),
     );
 
-    return chatRoomsWithLastMessages;
+    if (!search) {
+      return chatRoomsWithDetails;
+    }
+
+    const searchLower = search.toLowerCase().trim();
+    return this.filterChatRoomsBySearch(chatRoomsWithDetails, searchLower);
+  }
+
+  private async enrichChatRoomWithDetails(
+    room: ChatRoomEntity,
+    userId: number,
+  ): Promise<ChatRoomEntity> {
+    try {
+      const lastMessageData = await this.chatService.getLastMessageForRoom(
+        room.id,
+      );
+      if (lastMessageData) {
+        room.lastMessage = lastMessageData.text;
+        room.lastMessageTime = new Date(lastMessageData.timestamp);
+      }
+      room.unreadMessagesCount = await this.chatService.getUnreadMessagesCount(
+        room.id,
+        userId,
+      );
+      return room;
+    } catch (error) {
+      console.error(`Error processing chat room ${room.id}:`, error);
+      return room;
+    }
+  }
+
+  private filterChatRoomsBySearch(
+    rooms: ChatRoomEntity[],
+    searchLower: string,
+  ): ChatRoomEntity[] {
+    return rooms.filter((room) => {
+      const creatorName = room.creator?.name?.toLowerCase() || '';
+      const recipientName = room.recipient?.name?.toLowerCase() || '';
+      const lastMessage = room.lastMessage?.toLowerCase() || '';
+
+      const isCreatorName = creatorName.includes(searchLower);
+      const isRecipientName = recipientName.includes(searchLower);
+      const isLastMessage = lastMessage.includes(searchLower);
+
+      if (isCreatorName || isRecipientName || isLastMessage) {
+        room.searchText = (
+          isCreatorName
+            ? creatorName
+            : isRecipientName
+              ? recipientName
+              : lastMessage
+        ).trim();
+        return true;
+      }
+      return false;
+    });
   }
 }

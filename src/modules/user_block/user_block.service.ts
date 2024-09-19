@@ -1,6 +1,5 @@
 import { UserBlockEntity } from './user_block.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
-
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserService } from '../user/user.service';
@@ -32,10 +31,66 @@ export class UserBlockService {
       throw new NotFoundException('Blocked user not found');
     }
 
+    const existingBlock = await this.userBlockRepository.findOne({
+      where: { blocker: { id: blockerUserId }, blocked: { id: blockedUserId } },
+    });
+
+    if (existingBlock) {
+      if (existingBlock.status === Status.APPROVED) {
+        return existingBlock; // 이미 차단된 상태
+      }
+      existingBlock.status = Status.APPROVED;
+      return await this.userBlockRepository.save(existingBlock);
+    }
+
     return await this.userBlockRepository.save({
       blocker,
       blocked,
-      status: Status.APPROVED, // 신고 처리 절차를 생략하고 바로 승인 상태로 처리
+      status: Status.APPROVED,
+    });
+  }
+
+  async unblock({
+    blockerUserId,
+    blockedUserId,
+  }: {
+    blockerUserId: number;
+    blockedUserId: number;
+  }) {
+    const existingBlock = await this.userBlockRepository.findOne({
+      where: { blocker: { id: blockerUserId }, blocked: { id: blockedUserId } },
+    });
+
+    if (!existingBlock) {
+      throw new NotFoundException('Block not found');
+    }
+
+    if (existingBlock.status === Status.REJECTED) {
+      return existingBlock;
+    }
+
+    existingBlock.status = Status.REJECTED;
+    return await this.userBlockRepository.save(existingBlock);
+  }
+
+  async getBlockStatus({
+    blockerUserId,
+    blockedUserId,
+  }: {
+    blockerUserId: number;
+    blockedUserId: number;
+  }) {
+    const block = await this.userBlockRepository.findOne({
+      where: { blocker: { id: blockerUserId }, blocked: { id: blockedUserId } },
+    });
+
+    return block ? block.status : null;
+  }
+
+  async listBlockedUsers(userId: number) {
+    return await this.userBlockRepository.find({
+      where: { blocker: { id: userId }, status: Status.APPROVED },
+      relations: ['blocked'],
     });
   }
 }
