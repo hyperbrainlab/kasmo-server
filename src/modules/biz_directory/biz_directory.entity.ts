@@ -16,7 +16,7 @@ export class BizDirectoryEntity extends AbstractEntity {
   })
   category: BusinessDirectoryCategories;
 
-  @ManyToOne(() => UserEntity, (user) => user.posts)
+  @ManyToOne(() => UserEntity, (user) => user.bizDirectories)
   @JoinColumn()
   owner: UserEntity;
 

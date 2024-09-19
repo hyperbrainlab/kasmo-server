@@ -5,6 +5,7 @@ import {
   Delete,
   Put,
   Param,
+  Patch,
   Body,
   HttpCode,
   HttpStatus,
@@ -185,6 +186,21 @@ export class PostController {
   ) {
     try {
       return this.postService.update(postId, updatePostRequest);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @Patch(':postId')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async pinPost(
+    @Param('postId', ParseIntPipe) postId: number,
+    @Body('isAdvertise') isAdvertise: boolean,
+  ) {
+    try {
+      return this.postService.toggleIsAdvertise(postId, isAdvertise);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

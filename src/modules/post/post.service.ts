@@ -216,4 +216,8 @@ export class PostService {
   async delete(postId: number) {
     return await this.postRepository.delete(postId);
   }
+
+  async toggleIsAdvertise(postId: number, isAdvertise: boolean) {
+    return await this.postRepository.update({ id: postId }, { isAdvertise });
+  }
 }

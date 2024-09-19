@@ -9,7 +9,7 @@ import { SignupRequest } from '../auth/dto/signup.dto';
 
 import { UpdateUserRequest } from './dto/update.user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository, DataSource } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { PostEntity } from '../post/post.entity';
 import { CommentEntity } from '../comment/comment.entity';
 
@@ -24,6 +24,10 @@ export class UserService {
     private readonly commentRepository: Repository<CommentEntity>,
     private dataSource: DataSource,
   ) {}
+
+  async findUsers() {
+    return await this.userRepository.find();
+  }
 
   async findUser(userId: number) {
     const user = await this.userRepository.findOne({
@@ -69,6 +73,10 @@ export class UserService {
     await this.userRepository.update({ id: userId }, updateUserRequest);
 
     return await this.userRepository.findOneBy({ id: userId });
+  }
+
+  async updateCompany(userId: number, companyId: number) {
+    await this.userRepository.update({ id: userId }, {});
   }
 
   async updateFcmToken(

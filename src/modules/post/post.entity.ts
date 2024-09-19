@@ -54,7 +54,9 @@ export class PostEntity extends AbstractEntity {
     isArray: true,
     type: () => CommentEntity,
   })
-  @OneToMany(() => CommentEntity, (comment) => comment.post, { cascade: true })
+  @OneToMany(() => CommentEntity, (comment) => comment.post, {
+    cascade: true,
+  })
   comments: CommentEntity[];
 
   @ApiProperty({ description: '상위 게시글 정보', type: () => PostEntity })
@@ -68,6 +70,8 @@ export class PostEntity extends AbstractEntity {
     description: '하위 게시글 정보',
     type: () => [PostEntity],
   })
-  @OneToMany(() => PostEntity, (post) => post.parentPost, { cascade: true })
+  @OneToMany(() => PostEntity, (post) => post.parentPost, {
+    cascade: true,
+  })
   childPosts: [PostEntity];
 }

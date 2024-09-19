@@ -16,6 +16,7 @@ import { Provider } from '../auth/constants';
 import { ChatRoomEntity } from '../chat_room/chat_room.entity';
 import { NotificationEntity } from '../notification/notification.entity';
 import { UserType } from './constants';
+import { BizDirectoryEntity } from '../biz_directory/biz_directory.entity';
 
 @Entity('user')
 export class UserEntity extends AbstractEntity {
@@ -96,14 +97,18 @@ export class UserEntity extends AbstractEntity {
     description: '유저가 작성한 게시글',
     type: () => [PostEntity],
   })
-  @OneToMany(() => PostEntity, (post) => post.user, { cascade: true })
+  @OneToMany(() => PostEntity, (post) => post.user, {
+    cascade: true,
+  })
   posts: PostEntity[];
 
   @ApiProperty({
     description: '유저가 작성한 댓글',
     type: () => [CommentEntity],
   })
-  @OneToMany(() => CommentEntity, (comment) => comment.user, { cascade: true })
+  @OneToMany(() => CommentEntity, (comment) => comment.user, {
+    cascade: true,
+  })
   comments: [CommentEntity];
 
   @ApiProperty({
@@ -128,14 +133,18 @@ export class UserEntity extends AbstractEntity {
     description: '유저가 행한 신고',
     type: () => [ReportEntity],
   })
-  @OneToMany(() => ReportEntity, (report) => report.reporter, { cascade: true })
+  @OneToMany(() => ReportEntity, (report) => report.reporter, {
+    cascade: true,
+  })
   reportsMade: [ReportEntity];
 
   @ApiProperty({
     description: '유저가 당한 신고',
     type: () => [ReportEntity],
   })
-  @OneToMany(() => ReportEntity, (report) => report.reported, { cascade: true })
+  @OneToMany(() => ReportEntity, (report) => report.reported, {
+    cascade: true,
+  })
   reportsReceived: [ReportEntity];
 
   @ApiProperty({
@@ -165,4 +174,14 @@ export class UserEntity extends AbstractEntity {
   })
   @JoinColumn()
   notification: NotificationEntity;
+
+  @ApiProperty({
+    description: '유저가 소유한 비즈니스 디렉토리',
+    type: () => [BizDirectoryEntity],
+  })
+  @OneToMany(() => BizDirectoryEntity, (bizDirectory) => bizDirectory.owner, {
+    cascade: true,
+  })
+  @JoinColumn()
+  bizDirectories: [BizDirectoryEntity];
 }

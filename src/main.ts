@@ -20,7 +20,7 @@ async function bootstrap() {
   const corsOptions: CorsOptions = {
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Accept',
+    allowedHeaders: 'Content-Type, Accept, Authorization',
     credentials: true,
   };
 
@@ -29,6 +29,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   app.enableCors(corsOptions);
+
   await app.listen(PORT);
 }
 bootstrap();
