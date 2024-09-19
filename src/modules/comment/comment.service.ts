@@ -98,7 +98,7 @@ export class CommentService {
 
   private mapToResponse(comment: CommentEntity): CommentResponse {
     return plainToClass(CommentResponse, comment, {
-      excludeExtraneousValues: true,
+      excludeExtraneousValues: false,
     });
   }
 }

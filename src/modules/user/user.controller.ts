@@ -54,7 +54,7 @@ export class UserController {
       }
 
       return plainToClass(UserProfileResponse, user, {
-        excludeExtraneousValues: true,
+        excludeExtraneousValues: false,
       });
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -123,7 +123,7 @@ export class UserController {
       }
 
       return plainToClass(UserProfileResponse, user, {
-        excludeExtraneousValues: true,
+        excludeExtraneousValues: false,
       });
     } catch (error) {
       throw new InternalServerErrorException(error);
