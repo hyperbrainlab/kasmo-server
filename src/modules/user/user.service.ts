@@ -50,6 +50,10 @@ export class UserService {
     };
   }
 
+  async findOneByUserId(userId: string) {
+    return await this.userRepository.findOneBy({ userId });
+  }
+
   async findOneById(userId: number): Promise<UserEntity | undefined> {
     return await this.userRepository.findOneBy({ id: userId });
   }

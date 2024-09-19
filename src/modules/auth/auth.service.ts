@@ -38,8 +38,8 @@ export class AuthService {
   }
 
   async adminLogin(adminLoginRequest: AdminLoginRequest) {
-    const user = await this.userService.findUser(
-      Number(adminLoginRequest.userId),
+    const user = await this.userService.findOneByUserId(
+      adminLoginRequest.userId,
     );
 
     if (!user || user.userType !== UserType.ADMIN) {
