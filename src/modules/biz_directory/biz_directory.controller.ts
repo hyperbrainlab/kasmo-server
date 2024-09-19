@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Delete,
   Put,
   Body,
@@ -152,6 +153,19 @@ export class BizDirectoryController {
         bizDirectoryId,
         updateBizDirectoryRequest,
       );
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch(':bizDirectoryId/owner')
+  async setOwner(
+    @Param('bizDirectoryId', ParseIntPipe) bizDirectoryId: number,
+    @Body('ownerId', ParseIntPipe) ownerId: number,
+  ) {
+    try {
+      return await this.bizDirectoryService.setOwner(bizDirectoryId, ownerId);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

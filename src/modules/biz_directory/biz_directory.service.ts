@@ -77,6 +77,14 @@ export class BizDirectoryService {
     await this.bizDirectoryRepository.update(id, updateBizDirectoryRequest);
   }
 
+  async setOwner(id: number, ownerId: number) {
+    await this.bizDirectoryRepository.update(id, {
+      owner: {
+        id: ownerId,
+      },
+    });
+  }
+
   async deleteBizDirectory(id: number): Promise<void> {
     await this.bizDirectoryRepository.delete(id);
   }
