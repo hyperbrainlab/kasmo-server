@@ -23,6 +23,7 @@ import {
 } from '@nestjs/swagger';
 
 import { AuthGuard } from '../auth/auth.guard';
+import { UserBlockEntity } from './user_block.entity';
 
 @Controller('block')
 export class UserBlockController {
@@ -70,8 +71,10 @@ export class UserBlockController {
     }
   }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: '유저 블락 상태 확인하기' })
-  @ApiResponse({ status: 200 })
+  @ApiTags('user_block')
+  @ApiResponse({ status: 200, type: Boolean })
   @ApiParam({ name: 'blockedUserId', type: 'number' })
   @Get('status/:blockedUserId')
   @HttpCode(HttpStatus.OK)
@@ -91,8 +94,10 @@ export class UserBlockController {
     }
   }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: '블락한 유저 목록 가져오기' })
-  @ApiResponse({ status: 200 })
+  @ApiTags('user_block')
+  @ApiResponse({ status: 200, type: [UserBlockEntity] })
   @Get('list')
   @HttpCode(HttpStatus.OK)
   async listBlockedUsers(@Request() req) {
