@@ -46,7 +46,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async me(@Request() req): Promise<UserProfileResponse> {
+  async me(@Request() req): Promise<UserEntity> {
     try {
       const userId = req.user.id;
 
@@ -56,9 +56,7 @@ export class UserController {
         throw new NotFoundException('User not found');
       }
 
-      return plainToClass(UserProfileResponse, user, {
-        excludeExtraneousValues: false,
-      });
+      return user;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
