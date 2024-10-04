@@ -15,6 +15,7 @@ import { CreatePostRequest } from './dto/create.post.dto';
 import { UpdatePostRequest } from './dto/update.post.dto';
 import { UserEntity } from '../user/user.entity';
 import { ReplyPostRequest } from './dto/reply.post.dto';
+import { FcmService } from '../firebase/fcm.service';
 
 @Injectable()
 export class PostService {
@@ -24,6 +25,8 @@ export class PostService {
 
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+
+    private readonly fcmService: FcmService,
   ) {}
 
   async bulkDelete(ids: number[]): Promise<void> {
@@ -203,6 +206,14 @@ export class PostService {
       user,
       parentPost,
     });
+
+    if (parentPost.user.notification.postCommentNotification) {
+      this.fcmService.sendNotification({
+        token: parentPost.user.fcmToken,
+        title: '답글',
+        body: `${user.name} 님이 당신의 답글을 달았습니다.`,
+      });
+    }
 
     return await this.postRepository.save(post);
   }

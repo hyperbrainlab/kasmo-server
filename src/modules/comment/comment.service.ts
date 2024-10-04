@@ -8,6 +8,7 @@ import { CommentResponse } from './dto/retrieve.comment.dto';
 import { PostEntity } from '../post/post.entity';
 import { UserEntity } from '../user/user.entity';
 import { plainToClass } from 'class-transformer';
+import { FcmService } from '../firebase/fcm.service';
 
 @Injectable()
 export class CommentService {
@@ -18,6 +19,7 @@ export class CommentService {
     private readonly postRepository: Repository<PostEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    private readonly fcmService: FcmService,
   ) {}
 
   async findAll({ postId }: { postId: number }): Promise<CommentResponse[]> {
@@ -67,6 +69,14 @@ export class CommentService {
       where: { id: comment.id },
       relations: ['post', 'user', 'parentComment', 'childComments'],
     });
+
+    if (post.user.notification.replyCommentNotification) {
+      this.fcmService.sendNotification({
+        token: post.user.fcmToken,
+        title: '댓글',
+        body: `${user.name} 님이 댓글을 달았습니다.`,
+      });
+    }
 
     return this.mapToResponse(savedComment);
   }

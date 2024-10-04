@@ -38,6 +38,8 @@ export class ChatService {
       id: senderId,
     });
 
+    const recipient = chatRoom.recipient;
+
     if (!sender) {
       throw new NotFoundException('Sender not found');
     }
@@ -46,7 +48,7 @@ export class ChatService {
       throw new NotFoundException('Recipient not found');
     }
 
-    const recipientId = chatRoom.recipient.id;
+    const recipientId = recipient.id;
 
     await this.firebaseService
       .getDatabase()
@@ -61,11 +63,13 @@ export class ChatService {
         },
       });
 
-    this.fcmService.sendNotification({
-      token: chatRoom.recipient.fcmToken,
-      title: `${sender.name} 으로부터 메시지가 도착했습니다.`,
-      body: message,
-    });
+    if (recipient.notification.chatNotification) {
+      this.fcmService.sendNotification({
+        token: chatRoom.recipient.fcmToken,
+        title: '채팅',
+        body: `${sender.name} 님이 채팅을 보냈습니다.`,
+      });
+    }
   }
 
   async getMessages(roomId: string): Promise<Message[]> {
