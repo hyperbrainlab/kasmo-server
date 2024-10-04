@@ -31,7 +31,7 @@ export class ChatService {
   }): Promise<void> {
     const chatRoom = await this.chatRoomRepository.findOne({
       where: { id: roomId },
-      relations: ['creator', 'recipient'],
+      relations: ['creator', 'recipient', 'recipient.notification'],
     });
 
     const sender = await this.userRepository.findOneBy({
@@ -63,7 +63,7 @@ export class ChatService {
         },
       });
 
-    if (recipient.notification.chatNotification) {
+    if (!!recipient.notification?.chatNotification) {
       this.fcmService.sendNotification({
         token: chatRoom.recipient.fcmToken,
         title: '채팅',

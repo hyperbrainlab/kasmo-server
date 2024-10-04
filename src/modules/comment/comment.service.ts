@@ -49,7 +49,12 @@ export class CommentService {
       parentCommentId
         ? this.commentRepository.findOne({ where: { id: parentCommentId } })
         : Promise.resolve(null),
-      this.postRepository.findOneBy({ id: Number(postId) }),
+      this.postRepository.findOne({
+        where: {
+          id: postId,
+        },
+        relations: ['user', 'user.notification'],
+      }),
       this.userRepository.findOneBy({ id: Number(userId) }),
     ]);
 
@@ -70,7 +75,7 @@ export class CommentService {
       relations: ['post', 'user', 'parentComment', 'childComments'],
     });
 
-    if (post.user.notification.replyCommentNotification) {
+    if (!!post.user.notification?.replyCommentNotification) {
       this.fcmService.sendNotification({
         token: post.user.fcmToken,
         title: '댓글',

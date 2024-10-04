@@ -189,8 +189,9 @@ export class PostService {
       id: replyPostRequest.userId,
     });
 
-    const parentPost = await this.postRepository.findOneBy({
-      id: replyPostRequest.parentPostId,
+    const parentPost = await this.postRepository.findOne({
+      where: { id: replyPostRequest.parentPostId },
+      relations: ['user', 'user.notification'],
     });
 
     if (!parentPost) {
@@ -207,7 +208,7 @@ export class PostService {
       parentPost,
     });
 
-    if (parentPost.user.notification.postCommentNotification) {
+    if (!!parentPost.user.notification?.postCommentNotification) {
       this.fcmService.sendNotification({
         token: parentPost.user.fcmToken,
         title: '답글',
