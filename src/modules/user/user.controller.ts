@@ -142,7 +142,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async profile(@Param('userId') userId: number): Promise<UserProfileResponse> {
+  async profile(@Param('userId') userId: number): Promise<UserEntity> {
     try {
       const user = await this.userService.findUser(userId);
 
@@ -150,9 +150,7 @@ export class UserController {
         throw new NotFoundException('User not found');
       }
 
-      return plainToClass(UserProfileResponse, user, {
-        excludeExtraneousValues: false,
-      });
+      return user;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
