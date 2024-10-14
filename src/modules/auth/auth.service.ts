@@ -46,6 +46,9 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    // const hash = await bcrypt.hash(adminLoginRequest.password, 10);
+    // console.log(hash);
+
     const isPasswordValid = await bcrypt.compare(
       adminLoginRequest.password,
       user.password,
@@ -67,6 +70,7 @@ export class AuthService {
       accessToken,
     };
   }
+
   async signup(signupRequest: SignupRequest) {
     const user = await this.userService.findOneByUid(signupRequest.uid);
 

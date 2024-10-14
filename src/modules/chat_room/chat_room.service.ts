@@ -67,6 +67,12 @@ export class ChatRoomService {
       chatRooms.map((room) => this.enrichChatRoomWithDetails(room, userId)),
     );
 
+    chatRoomsWithDetails.sort((a, b) => {
+      const timeA = a.lastMessageTime ? a.lastMessageTime.getTime() : 0;
+      const timeB = b.lastMessageTime ? b.lastMessageTime.getTime() : 0;
+      return timeB - timeA;
+    });
+
     if (!search) {
       return chatRoomsWithDetails;
     }

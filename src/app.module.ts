@@ -37,10 +37,15 @@ import { FcmModule } from './modules/firebase/fcm.module';
         database: process.env.DATABASE_NAME,
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true,
+        // logging: true,
+        // logger: 'advanced-console',
         namingStrategy: new SnakeNamingStrategy(),
       }),
       dataSourceFactory: async (options) => {
         const dataSource = await new DataSource(options).initialize();
+
+        // await dataSource.synchronize(true);
+
         return dataSource;
       },
     }),

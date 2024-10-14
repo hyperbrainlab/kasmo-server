@@ -180,6 +180,13 @@ export class UserService {
 
       await queryRunner.manager.delete('comment', { user: { id: userId } });
       await queryRunner.manager.delete('post', { user: { id: userId } });
+      await queryRunner.manager.delete('chat_room', {
+        creator: { id: userId },
+      });
+      await queryRunner.manager.delete('report', { reporter: { id: userId } });
+      await queryRunner.manager.delete('user_block', {
+        blocker: { id: userId },
+      });
       await queryRunner.commitTransaction();
     } catch (err) {
       await queryRunner.rollbackTransaction();
