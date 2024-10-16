@@ -8,6 +8,8 @@ import { Message } from './dto/retrieve.chat.dto';
 import { FcmService } from '../firebase/fcm.service';
 import { UserEntity } from '../user/user.entity';
 
+import { NotificationService } from '../notification/notification.service';
+
 @Injectable()
 export class ChatService {
   constructor(
@@ -16,6 +18,7 @@ export class ChatService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
 
+    private readonly notificationService: NotificationService,
     private readonly fcmService: FcmService,
     private readonly firebaseService: FirebaseService,
   ) {}
@@ -31,7 +34,7 @@ export class ChatService {
   }): Promise<void> {
     const chatRoom = await this.chatRoomRepository.findOne({
       where: { id: roomId },
-      relations: ['creator', 'recipient', 'recipient.notification'],
+      relations: ['creator', 'recipient'],
     });
 
     const sender = await this.userRepository.findOneBy({
@@ -63,7 +66,11 @@ export class ChatService {
         },
       });
 
-    if (!!recipient.notification?.chatNotification) {
+    const notification = await this.notificationService.getNotification(
+      recipient.id,
+    );
+
+    if (!!notification?.chatNotification) {
       await this.fcmService.sendNotification({
         token: chatRoom.recipient.fcmToken,
         title: '채팅',

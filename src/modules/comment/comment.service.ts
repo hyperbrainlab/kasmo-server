@@ -9,6 +9,7 @@ import { PostEntity } from '../post/post.entity';
 import { UserEntity } from '../user/user.entity';
 import { plainToClass } from 'class-transformer';
 import { FcmService } from '../firebase/fcm.service';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class CommentService {
@@ -20,6 +21,7 @@ export class CommentService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly fcmService: FcmService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async findAll({ postId }: { postId: number }): Promise<CommentResponse[]> {
@@ -75,7 +77,11 @@ export class CommentService {
       relations: ['post', 'user', 'parentComment', 'childComments'],
     });
 
-    if (!!post.user.notification?.replyCommentNotification) {
+    const notification = await this.notificationService.getNotification(
+      post.user.id,
+    );
+
+    if (!!notification?.replyCommentNotification) {
       this.fcmService.sendNotification({
         token: post.user.fcmToken,
         title: '댓글',

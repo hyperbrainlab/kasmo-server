@@ -16,17 +16,17 @@ import { UpdatePostRequest } from './dto/update.post.dto';
 import { UserEntity } from '../user/user.entity';
 import { ReplyPostRequest } from './dto/reply.post.dto';
 import { FcmService } from '../firebase/fcm.service';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectRepository(PostEntity)
     private readonly postRepository: Repository<PostEntity>,
-
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-
     private readonly fcmService: FcmService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async bulkDelete(ids: number[]): Promise<void> {
@@ -208,7 +208,11 @@ export class PostService {
       parentPost,
     });
 
-    if (!!parentPost.user.notification?.postCommentNotification) {
+    const notification = await this.notificationService.getNotification(
+      parentPost.user.id,
+    );
+
+    if (!!notification?.postCommentNotification) {
       this.fcmService.sendNotification({
         token: parentPost.user.fcmToken,
         title: '답글',

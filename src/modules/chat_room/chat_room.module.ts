@@ -9,12 +9,14 @@ import { ChatService } from '../chat/chat.service';
 import { FirebaseService } from '../firebase/firebase.service';
 import { FcmModule } from '../firebase/fcm.module';
 import { FirebaseModule } from '../firebase/firebase.module';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ChatRoomEntity, UserEntity]),
     FcmModule,
     FirebaseModule,
+    NotificationModule,
   ],
   providers: [ChatService, FirebaseService, ChatRoomService],
   controllers: [ChatRoomController],
