@@ -34,6 +34,7 @@ export class UserService {
       where: { id: userId },
       relations: [
         'posts',
+        'posts.comments',
         'comments',
         'blocksMade',
         'blocksReceived',
@@ -42,9 +43,18 @@ export class UserService {
       ],
     });
 
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
     const visitsCount = user.posts.reduce((acc, post) => {
       return acc + post.viewCount;
     }, 0);
+
+    user.posts = user.posts.map((post) => ({
+      ...post,
+      commentsCount: post.comments.length,
+    }));
 
     return {
       ...user,
