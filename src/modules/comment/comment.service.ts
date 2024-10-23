@@ -86,6 +86,9 @@ export class CommentService {
         token: post.user.fcmToken,
         title: '댓글',
         body: `${user.name} 님이 댓글을 달았습니다.`,
+        data: {
+          postId: post.id,
+        },
       });
     }
 

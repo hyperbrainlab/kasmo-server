@@ -75,6 +75,9 @@ export class ChatService {
         token: chatRoom.recipient.fcmToken,
         title: '채팅',
         body: `${sender.name} 님이 채팅을 보냈습니다.`,
+        data: {
+          chatRoomId: chatRoom.id,
+        },
       });
     }
   }

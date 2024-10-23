@@ -25,4 +25,7 @@ export class BannerEntity extends AbstractEntity {
 
   @Column({ type: 'integer' })
   order: number;
+
+  @Column({ type: 'boolean' })
+  enabled: boolean;
 }

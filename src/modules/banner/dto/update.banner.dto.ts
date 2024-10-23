@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsOptional,
   IsDate,
+  IsBoolean,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Categories, SubCategories } from 'src/modules/post/constants';
@@ -49,4 +50,9 @@ export class UpdateBannerRequest {
   @IsNumber()
   @IsNotEmpty()
   order: number;
+
+  @ApiProperty({ description: '활성 여부', required: false, nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  enabled: boolean;
 }
