@@ -219,6 +219,7 @@ export class PostService {
         body: `${user.name} 님이 당신의 답글을 달았습니다.`,
         data: {
           postId: post.id,
+          type: 'post',
         },
       });
     }

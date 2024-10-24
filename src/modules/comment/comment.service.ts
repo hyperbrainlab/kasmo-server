@@ -24,8 +24,8 @@ export class CommentService {
     private readonly notificationService: NotificationService,
   ) {}
 
-  async findAll({ postId }: { postId: number }): Promise<CommentResponse[]> {
-    const comments = await this.commentRepository.find({
+  async findAll({ postId }: { postId: number }): Promise<CommentEntity[]> {
+    return await this.commentRepository.find({
       where: {
         post: { id: postId },
         parentComment: null,
@@ -38,8 +38,6 @@ export class CommentService {
         'childComments.user',
       ],
     });
-
-    return comments.map((comment) => this.mapToResponse(comment));
   }
 
   async create(
@@ -88,6 +86,7 @@ export class CommentService {
         body: `${user.name} 님이 댓글을 달았습니다.`,
         data: {
           postId: post.id,
+          type: 'comment',
         },
       });
     }
