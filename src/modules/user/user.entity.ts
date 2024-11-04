@@ -179,7 +179,7 @@ export class UserEntity extends AbstractEntity {
   @OneToOne(() => NotificationEntity, (notification) => notification.user, {
     cascade: true,
   })
-  @JoinColumn()
+  @JoinColumn({ name: 'notification_id' })
   notification: NotificationEntity;
 
   @ApiProperty({

@@ -47,3 +47,9 @@ export class CreateNotificationRequest {
   @IsNotEmpty()
   announcementNotification: boolean;
 }
+
+export interface SendNotificationMulticast {
+  userIds: number[];
+  title: string;
+  body: string;
+}

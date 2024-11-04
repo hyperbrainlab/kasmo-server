@@ -17,7 +17,7 @@ export class NotificationEntity extends AbstractEntity {
   @Column({ type: 'boolean', default: false })
   announcementNotification: boolean;
 
-  @OneToOne(() => UserEntity, { eager: true })
-  @JoinColumn()
+  @OneToOne(() => UserEntity)
+  @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 }

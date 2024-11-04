@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Post,
   Patch,
   Body,
   Request,
@@ -22,10 +23,16 @@ import { AuthGuard } from '../auth/auth.guard';
 import { NotificationService } from './notification.service';
 import { NotificationResponse } from './dto/retrieve.notification.dto';
 import { UpdateNotificationRequest } from './dto/update.notification.dto';
+import { SendNotificationMulticastRequest } from './dto/send.notification.dto';
+
+import { FcmService } from '../firebase/fcm.service';
 
 @Controller('notification')
 export class NotificationController {
-  constructor(private notificationService: NotificationService) {}
+  constructor(
+    private notificationService: NotificationService,
+    private readonly fcmService: FcmService,
+  ) {}
 
   @ApiBearerAuth()
   @ApiOperation({ summary: '알림 설정 조회' })
@@ -61,6 +68,24 @@ export class NotificationController {
       return await this.notificationService.updateNotification(
         userId,
         updateNotificationRequest,
+      );
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('all')
+  async sendNotificationMulticast(
+    @Body()
+    sendNotificationMulticastRequest: Omit<
+      SendNotificationMulticastRequest,
+      'tokens'
+    >,
+  ) {
+    try {
+      return await this.notificationService.sendNotificationMulticast(
+        sendNotificationMulticastRequest,
       );
     } catch (error) {
       throw new InternalServerErrorException(error);

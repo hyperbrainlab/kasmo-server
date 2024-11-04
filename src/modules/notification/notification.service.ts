@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,12 +6,18 @@ import { Repository } from 'typeorm';
 import { NotificationEntity } from './notification.entity';
 import { UpdateNotificationRequest } from './dto/update.notification.dto';
 import { CreateNotificationRequest } from './dto/create.notification.dto';
+import { SendNotificationMulticastRequest } from './dto/send.notification.dto';
+import { UserEntity } from '../user/user.entity';
+import { FcmService } from '../firebase/fcm.service';
 
 @Injectable()
 export class NotificationService {
   constructor(
     @InjectRepository(NotificationEntity)
     private readonly notificationRepository: Repository<NotificationEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    private readonly fcmService: FcmService,
   ) {}
 
   async getNotification(userId: number) {
@@ -79,5 +85,32 @@ export class NotificationService {
         id: notification.id,
       });
     }
+  }
+
+  async sendNotificationMulticast(
+    request: Omit<SendNotificationMulticastRequest, 'tokens'>,
+  ) {
+    const users = await this.userRepository.find({
+      where: {
+        notification: {
+          announcementNotification: true,
+        },
+      },
+      relations: ['notification'],
+    });
+
+    if (!users.length) {
+      throw new NotFoundException('Users not found');
+    }
+
+    const tokens = users.map((user) => user.fcmToken);
+
+    const { title, body } = request;
+
+    await this.fcmService.sendNotificationToMultiple({
+      tokens,
+      title,
+      body,
+    });
   }
 }

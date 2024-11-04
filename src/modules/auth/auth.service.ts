@@ -9,12 +9,16 @@ import { SignupRequest } from './dto/signup.dto';
 import { UpdateFcmTokenRequest } from './dto/update.fcm_token.request.dto';
 import { AdminLoginRequest } from './dto/admin.login.request.dto';
 import { UserType } from '../user/constants';
+import { NotificationService } from '../notification/notification.service';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private notificationService: NotificationService,
+    private dataSource: DataSource,
   ) {}
 
   async login(loginRequest: LoginRequest): Promise<LoginResponse> {
@@ -77,7 +81,16 @@ export class AuthService {
     if (user) {
       await this.userService.restoreUser(user.id);
     } else {
-      await this.userService.create(signupRequest);
+      await this.dataSource.transaction(async () => {
+        const signedUser = await this.userService.create(signupRequest);
+
+        await this.notificationService.createNotification(signedUser.id, {
+          chatNotification: true,
+          postCommentNotification: true,
+          replyCommentNotification: true,
+          announcementNotification: true,
+        });
+      });
     }
 
     return await this.login({ uid: signupRequest.uid });

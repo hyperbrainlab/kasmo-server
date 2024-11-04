@@ -1,4 +1,5 @@
 export enum Categories {
+  HOME = 'home',
   JOB_LISTINGS = 'job_listings', // 구인구직
   USED_GOODS = 'used_goods', // 중고거래
   REAL_ESTATE = 'real_estate', // 부동산
@@ -51,6 +52,7 @@ export enum SortBy {
 }
 
 export enum SubCategories {
+  HOME = 'home',
   // Job Listings
   EMPLOYER = 'employer', // 구인
   JOB_SEEKER = 'job_seeker', // 구직
