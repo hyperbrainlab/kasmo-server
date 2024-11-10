@@ -22,6 +22,7 @@ import { NotificationModule } from './modules/notification/notification.module';
 import { ChatGateway } from './modules/chat/chat.gateway';
 import { FirebaseModule } from './modules/firebase/firebase.module';
 import { FcmModule } from './modules/firebase/fcm.module';
+import { FileModule } from './modules/file/file.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { FcmModule } from './modules/firebase/fcm.module';
     BizDirectoryModule,
     BannerModule,
     NotificationModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService, ChatGateway],

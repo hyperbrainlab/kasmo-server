@@ -11,13 +11,19 @@ import {
   UseGuards,
   InternalServerErrorException,
   ParseIntPipe,
+  UseInterceptors,
+  BadRequestException,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiTags,
   ApiResponse,
+  ApiConsumes,
+  ApiBody,
 } from '@nestjs/swagger';
 
 import { AuthGuard } from '../auth/auth.guard';
@@ -28,10 +34,14 @@ import { UpdateBannerRequest } from './dto/update.banner.dto';
 import { BannerResponse } from './dto/retrieve.banner.dto';
 import { DeleteResult } from 'typeorm';
 import { BulkDeleteDto } from './dto/bulk.delete.post.dto';
+import { FileService } from '../file/file.service';
 
 @Controller('banner')
 export class BannerController {
-  constructor(private bannerService: BannerService) {}
+  constructor(
+    private bannerService: BannerService,
+    private readonly fileService: FileService,
+  ) {}
 
   @ApiBearerAuth()
   @ApiOperation({ summary: '배너 목록 조회' })
@@ -63,10 +73,56 @@ export class BannerController {
   @ApiResponse({ status: 200 })
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
-  @Post('')
-  async createBizDirectory(@Body() createBannerRequest: CreateBannerRequest) {
+  @Post()
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: {
+        fileSize: 1024 * 1024 * 20, // 20MB
+      },
+      fileFilter: (req, file, callback) => {
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+          return callback(
+            new BadRequestException('지원하지 않는 이미지 형식입니다'),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+        category: { type: 'string' },
+        subCategory: { type: 'string' },
+        description: { type: 'string' },
+        startDate: { type: 'string', format: 'date-time' },
+        endDate: { type: 'string', format: 'date-time' },
+        order: { type: 'number' },
+        enabled: { type: 'boolean' },
+      },
+    },
+  })
+  async createBanner(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() createBannerRequest: CreateBannerRequest,
+  ): Promise<BannerResponse> {
     try {
-      return await this.bannerService.createBanner(createBannerRequest);
+      if (!file) {
+        throw new BadRequestException('이미지 파일이 필요합니다.');
+      }
+
+      const imageUrl = await this.fileService.uploadFile(file);
+      return await this.bannerService.createBanner({
+        ...createBannerRequest,
+        imageUrl,
+      });
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -79,9 +135,9 @@ export class BannerController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Delete(':banerId')
-  async deleteBizDirectory(@Param('banerId', ParseIntPipe) banerId: number) {
+  async deleteBanner(@Param('banerId', ParseIntPipe) bannerId: number) {
     try {
-      return await this.bannerService.deleteBanner(banerId);
+      return await this.bannerService.deleteBanner(bannerId);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -94,13 +150,13 @@ export class BannerController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Put(':banerId')
-  async updateBizDirectory(
-    @Param('banerId', ParseIntPipe) banerId: number,
+  async updateBanner(
+    @Param('banerId', ParseIntPipe) bannerId: number,
     @Body() updateBannerRequest: UpdateBannerRequest,
   ) {
     try {
       return await this.bannerService.updateBanner(
-        banerId,
+        bannerId,
         updateBannerRequest,
       );
     } catch (error) {

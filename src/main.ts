@@ -4,6 +4,10 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 
 import { AppModule } from './app.module';
+
+import * as express from 'express';
+import { join } from 'path';
+
 const PORT = 8080;
 
 async function bootstrap() {
@@ -29,6 +33,8 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   app.enableCors(corsOptions);
+
+  app.use('/banners', express.static(join(__dirname, '..', 'uploads/banners')));
 
   await app.listen(PORT);
 }
