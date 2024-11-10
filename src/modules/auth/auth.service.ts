@@ -76,24 +76,38 @@ export class AuthService {
   }
 
   async signup(signupRequest: SignupRequest) {
-    const user = await this.userService.findOneByUid(signupRequest.uid);
+    const existingUser = await this.userService.findOneByUid(signupRequest.uid);
 
-    if (user) {
-      await this.userService.restoreUser(user.id);
+    if (existingUser) {
+      await this.userService.restoreUser(existingUser.id);
     } else {
-      await this.dataSource.transaction(async () => {
-        const signedUser = await this.userService.create(signupRequest);
-
-        await this.notificationService.createNotification(signedUser.id, {
-          chatNotification: true,
-          postCommentNotification: true,
-          replyCommentNotification: true,
-          announcementNotification: true,
-        });
-      });
+      await this.createNewUser(signupRequest);
     }
 
-    return await this.login({ uid: signupRequest.uid });
+    return this.login({ uid: signupRequest.uid });
+  }
+
+  private async createNewUser(signupRequest: SignupRequest) {
+    return this.dataSource.transaction(async () => {
+      const user = await this.userService.create(signupRequest);
+
+      const defaultNotificationSettings = {
+        chatNotification: true,
+        postCommentNotification: true,
+        replyCommentNotification: true,
+        announcementNotification: true,
+      };
+
+      const notification = await this.notificationService.createNotification(
+        user.id,
+        defaultNotificationSettings,
+      );
+
+      await this.userService.update(user.id, {
+        ...user,
+        notificationId: notification.identifiers[0].id,
+      });
+    });
   }
 
   async updateFcmToken(updateFcmTokenRequest: UpdateFcmTokenRequest) {

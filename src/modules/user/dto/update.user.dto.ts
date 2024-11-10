@@ -23,4 +23,8 @@ export class UpdateUserRequest {
   @ApiProperty({ description: '핸드폰 번호', type: String })
   @Expose({ name: 'phone_no' })
   phoneNo: UserEntity['phoneNo'];
+
+  @ApiProperty({ description: 'notification ID', type: Number })
+  @Expose({ name: 'notification_id' })
+  notificationId?: UserEntity['notification'];
 }

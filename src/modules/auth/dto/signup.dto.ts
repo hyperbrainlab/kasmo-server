@@ -68,4 +68,8 @@ export class SignupRequest {
   @IsString()
   @Expose({ name: 'fcm_token' })
   fcmToken: string;
+
+  @ApiProperty({ description: 'notification ID', type: Number })
+  @Expose({ name: 'notification_id' })
+  notificationId?: number;
 }

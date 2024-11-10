@@ -45,7 +45,7 @@ export class NotificationService {
     userId: number,
     createNotificationRequest: CreateNotificationRequest,
   ) {
-    await this.notificationRepository.insert({
+    return await this.notificationRepository.insert({
       user: { id: userId },
       ...createNotificationRequest,
     });
