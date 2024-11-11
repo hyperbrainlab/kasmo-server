@@ -85,7 +85,7 @@ export class CommentService {
         title: '댓글',
         body: `${user.name} 님이 댓글을 달았습니다.`,
         data: {
-          postId: post.id,
+          postId: `${post.id}`,
           type: 'comment',
         },
       });

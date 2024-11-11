@@ -72,11 +72,11 @@ export class ChatService {
 
     if (!!notification?.chatNotification) {
       await this.fcmService.sendNotification({
-        token: chatRoom.recipient.fcmToken,
+        token: recipient.fcmToken,
         title: '채팅',
         body: `${sender.name} 님이 채팅을 보냈습니다.`,
         data: {
-          chatRoomId: chatRoom.id,
+          chatRoomId: `${chatRoom.id}`,
           type: 'chat',
         },
       });
