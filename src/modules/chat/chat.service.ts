@@ -42,6 +42,7 @@ export class ChatService {
     });
 
     const recipient = chatRoom.recipient;
+    const creator = chatRoom.creator;
 
     if (!sender) {
       throw new NotFoundException('Sender not found');
@@ -50,8 +51,6 @@ export class ChatService {
     if (!chatRoom.recipient) {
       throw new NotFoundException('Recipient not found');
     }
-
-    const recipientId = recipient.id;
 
     await this.firebaseService
       .getDatabase()
@@ -62,17 +61,19 @@ export class ChatService {
         senderId,
         readyBy: {
           [senderId]: true,
-          [recipientId]: false,
+          [recipient.id]: false,
         },
       });
 
+    const opposite = senderId === recipient.id ? creator : recipient;
+
     const notification = await this.notificationService.getNotification(
-      recipient.id,
+      opposite.id,
     );
 
     if (!!notification?.chatNotification) {
       await this.fcmService.sendNotification({
-        token: recipient.fcmToken,
+        token: opposite.fcmToken,
         title: '채팅',
         body: `${sender.name} 님이 채팅을 보냈습니다.`,
         data: {
