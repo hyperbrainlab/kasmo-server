@@ -35,7 +35,6 @@ import { BannerResponse } from './dto/retrieve.banner.dto';
 import { DeleteResult } from 'typeorm';
 import { BulkDeleteDto } from './dto/bulk.delete.post.dto';
 import { FileService } from '../file/file.service';
-import { API_HOST } from 'src/constants/endpoints';
 
 @Controller('banner')
 export class BannerController {
@@ -122,7 +121,7 @@ export class BannerController {
       const imageUrl = await this.fileService.uploadFile(file);
       return await this.bannerService.createBanner({
         ...createBannerRequest,
-        imageUrl: `${API_HOST}${imageUrl}`,
+        imageUrl,
       });
     } catch (error) {
       throw new InternalServerErrorException(error);

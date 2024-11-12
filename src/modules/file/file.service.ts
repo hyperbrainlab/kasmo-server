@@ -1,29 +1,33 @@
 import { Injectable } from '@nestjs/common';
-import { promises as fs } from 'fs';
-import * as path from 'path';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 @Injectable()
 export class FileService {
-  private readonly uploadPath = 'uploads/banners';
+  private readonly s3Client: S3Client;
+  private readonly BUCKET_NAME = 'kasmo';
 
   constructor() {
-    this.createUploadDirectory();
-  }
-
-  private async createUploadDirectory() {
-    try {
-      await fs.mkdir(this.uploadPath, { recursive: true });
-    } catch (error) {
-      console.error('Failed to create upload directory:', error);
-    }
+    this.s3Client = new S3Client({
+      region: 'us-east-2',
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      },
+    });
   }
 
   async uploadFile(file: Express.Multer.File): Promise<string> {
-    const filename = `${Date.now()}-${file.originalname}`;
-    const filePath = path.join(this.uploadPath, filename);
+    const fileName = `banners/${Date.now()}-${file.originalname}`;
 
-    await fs.writeFile(filePath, file.buffer);
+    await this.s3Client.send(
+      new PutObjectCommand({
+        Bucket: this.BUCKET_NAME,
+        Key: fileName,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      }),
+    );
 
-    return `/banners/${filename}`;
+    return `https://${this.BUCKET_NAME}.s3.amazonaws.com/${fileName}`;
   }
 }
