@@ -26,6 +26,16 @@ export class BannerEntity extends AbstractEntity {
   @Column({ type: 'integer' })
   order: number;
 
-  @Column({ type: 'boolean' })
+  @Column({
+    type: 'tinyint',
+    transformer: {
+      to: (value: boolean | string) => {
+        if (value === 'true' || value === true) return 1;
+        if (value === 'false' || value === false) return 0;
+        return 0;
+      },
+      from: (value: number) => !!value,
+    },
+  })
   enabled: boolean;
 }

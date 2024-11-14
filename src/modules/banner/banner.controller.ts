@@ -150,15 +150,39 @@ export class BannerController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Put(':banerId')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: {
+        fileSize: 1024 * 1024 * 20, // 20MB
+      },
+      fileFilter: (req, file, callback) => {
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+          return callback(
+            new BadRequestException('지원하지 않는 이미지 형식입니다'),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  @ApiConsumes('multipart/form-data')
   async updateBanner(
     @Param('banerId', ParseIntPipe) bannerId: number,
+    @UploadedFile() file: Express.Multer.File,
     @Body() updateBannerRequest: UpdateBannerRequest,
   ) {
     try {
-      return await this.bannerService.updateBanner(
-        bannerId,
-        updateBannerRequest,
-      );
+      let imageUrl;
+
+      if (file) {
+        imageUrl = await this.fileService.uploadFile(file);
+      }
+
+      return await this.bannerService.updateBanner(bannerId, {
+        ...updateBannerRequest,
+        imageUrl,
+      });
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

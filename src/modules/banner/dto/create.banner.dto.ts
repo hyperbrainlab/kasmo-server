@@ -8,6 +8,7 @@ import {
   IsDate,
   IsBoolean,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { Categories, SubCategories } from 'src/modules/post/constants';
 
@@ -60,5 +61,6 @@ export class CreateBannerRequest {
   @ApiProperty({ description: '활성 여부', required: false, nullable: true })
   @IsBoolean()
   @IsOptional()
+  @Transform(({ value }) => value === 'true' || value === true)
   enabled: boolean;
 }
