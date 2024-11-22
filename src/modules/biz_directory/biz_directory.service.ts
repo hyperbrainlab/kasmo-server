@@ -108,6 +108,16 @@ export class BizDirectoryService {
       },
     });
 
+    result.data = await Promise.all(
+      result.data.map(async (item) => {
+        const fullItem = await this.bizDirectoryRepository.findOne({
+          where: { id: item.id },
+          relations: { owner: true },
+        });
+        return fullItem;
+      }),
+    );
+
     return result;
   }
 }

@@ -17,7 +17,7 @@ export class BizDirectoryEntity extends AbstractEntity {
   category: BusinessDirectoryCategories;
 
   @ManyToOne(() => UserEntity, (user) => user.bizDirectories)
-  @JoinColumn()
+  @JoinColumn({ name: 'owner_id' })
   owner: UserEntity;
 
   @Column({ type: 'text' })
